@@ -1,0 +1,4 @@
+requests==2.7.0
+readability==0.3.1
+goose3==3.1.9
+json==2.5.1
