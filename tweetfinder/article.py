@@ -47,9 +47,9 @@ class Article:
         embeds = self.count_embedded_tweets()
         return embeds > 0
 
-    def references_tweets(self):
-        references = self.count_referenced_tweets()
-        return references > 0
+    def mentions_tweets(self):
+        mentions = self.count_mentioned_tweets()
+        return mentions > 0
 
     def count_embedded_tweets(self):
         """Get the count of embedded tweets in the article."""
@@ -61,10 +61,10 @@ class Article:
             return goose_count
         return calc_count
 
-    def count_referenced_tweets(self):
-        """Get the count of tweet references in the article."""
-        twitter_references = self._get_twitter_phrases()
-        return twitter_references[0]
+    def count_mentioned_tweets(self):
+        """Get the count of tweet mentions in the article."""
+        twitter_mentions = self._get_twitter_phrases()
+        return twitter_mentions[0]
 
     def list_embedded_tweets(self):
         """Get a list of tweets from the article."""
@@ -76,10 +76,10 @@ class Article:
             return goose_tweet_list
         return calc_tweet_list
 
-    def list_referenced_tweets(self):
-        """Get a list of starting positions for each of the twitter references in the text."""
-        twitter_references = self._get_twitter_phrases()
-        return twitter_references[1]
+    def list_mentioned_tweets(self):
+        """Get a list of starting positions for each of the twitter mentions in the text."""
+        twitter_mentions = self._get_twitter_phrases()
+        return twitter_mentions[1]
 
     def _get_calc_tweets(self):
         article_text = self.content
@@ -108,7 +108,7 @@ class Article:
         # find the first occurrence of the twitter phrase, then continue searching for the
         # next occurrence of the twitter phrase from the index of end of the current twitter phrase
         # instance until there are no more twitter phrases located
-        reference_dict_list = []
+        mentions_dict_list = []
         article_text = self.content.summary()
         for twitter_phrase in self.mentions_list:
             start_index = 0
@@ -118,11 +118,11 @@ class Article:
                 start_index = phrase_index + len(twitter_phrase)
                 if phrase_index != -1:
                     twitter_phrase_count += 1
-                    reference_dict = {'start_index': start_index, 'phrase': twitter_phrase}
-                    reference_dict_list.append(reference_dict)
+                    mention_dict = {'start_index': start_index, 'phrase': twitter_phrase}
+                    mentions_dict_list.append(mention_dict)
         # returns a tuple of the twitter phrase count and a list of the starting indices of each of the
         # twitter phrases
-        return twitter_phrase_count, reference_dict_list
+        return twitter_phrase_count, mentions_dict_list
 
 
 class MyHTMLParser(HTMLParser):

@@ -22,15 +22,15 @@ class TweetFinderTests(unittest.TestCase):
 
     # count referenced tweets
     def test_count_referenced_tweets_ref_only(self):
-        reference_only_tweet_refs = self.reference_only_article.count_referenced_tweets()
+        reference_only_tweet_refs = self.reference_only_article.count_mentioned_tweets()
         assert reference_only_tweet_refs == 3
 
     def test_count_referenced_tweets_embeds_only(self):
-        embeds_tweet_refs = self.embedded_article.count_referenced_tweets()
+        embeds_tweet_refs = self.embedded_article.count_mentioned_tweets()
         assert embeds_tweet_refs == 6
 
     def test_count_referenced_tweets_empty_article(self):
-        empty_article_tweet_refs = self.empty_article.count_referenced_tweets()
+        empty_article_tweet_refs = self.empty_article.count_mentioned_tweets()
         assert empty_article_tweet_refs == 0
 
     # count embedded tweets
@@ -48,7 +48,7 @@ class TweetFinderTests(unittest.TestCase):
 
     # list referenced tweets
     def test_list_referenced_tweets_ref_only(self):
-        reference_only_tweet_refs = self.reference_only_article.list_referenced_tweets()
+        reference_only_tweet_refs = self.reference_only_article.list_mentioned_tweets()
         reference_1 = {'start_index': 0, 'phrase': ''}
         reference_2 = {'start_index': 0, 'phrase': ''}
         reference_3 = {'start_index': 0, 'phrase': ''}
@@ -56,7 +56,7 @@ class TweetFinderTests(unittest.TestCase):
         assert reference_only_tweet_refs == refs_list
 
     def test_list_referenced_tweets_embeds_only(self):
-        embeds_tweet_refs = self.embedded_article.list_referenced_tweets()
+        embeds_tweet_refs = self.embedded_article.list_mentioned_tweets()
         reference_1 = {'start_index': 0, 'phrase': ''}
         reference_2 = {'start_index': 0, 'phrase': ''}
         reference_3 = {'start_index': 0, 'phrase': ''}
@@ -67,7 +67,7 @@ class TweetFinderTests(unittest.TestCase):
         assert embeds_tweet_refs == refs_list
 
     def test_list_referenced_tweets_empty_article(self):
-        empty_article_tweet_refs = self.empty_article.list_referenced_tweets()
+        empty_article_tweet_refs = self.empty_article.list_mentioned_tweets()
         assert len(empty_article_tweet_refs) == 0
 
     # list embedded tweets
@@ -100,9 +100,9 @@ class TweetFinderTests(unittest.TestCase):
 
     # references tweets
     def test_references_tweets(self):
-        references_embedded_article = self.embedded_article.references_tweets()
-        references_refs_only_article = self.reference_only_article.references_tweets()
-        references_empty_article = self.empty_article.references_tweets()
+        references_embedded_article = self.embedded_article.mentions_tweets()
+        references_refs_only_article = self.reference_only_article.mentions_tweets()
+        references_empty_article = self.empty_article.mentions_tweets()
         assert references_empty_article is False and references_embedded_article is True and \
                references_refs_only_article is True
 

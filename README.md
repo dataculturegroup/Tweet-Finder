@@ -3,6 +3,7 @@ Tweet Finder
 
 A simple Python library for finding Tweets embedded, and mentions of Tweets, in online news articles.
 
+
 Quickstart
 ----------
 
@@ -11,13 +12,22 @@ Install with pip: `pip install tweetfinder`.
 ```python
 from tweetfinder import Article
 my_article = Article(url="http://my.news/article")  # this will load and parse the article
-my_article.count_references()
+
+# you can list discover all the tweets that are embedded in the HTML 
+num_embedded = my_article.count_embedded_tweets()
+tweets_embedded = my_article.list_embedded_tweets() # metadata about tweets that are embedded
+
+# you can also discover any mentions of twitter (in English), like "tweeted that" or "in a retweet"
+num_mentions = my_article.count_mentioned_tweets()
+tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet 
 ```
+
 
 API
 ---
 
 TODO
+
 
 Development
 -----------

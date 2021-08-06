@@ -17,9 +17,9 @@ for file in os.listdir(trunk):
     article = Article(html=article_json['story_text'])
     tweet_id_list.append(article_json['story_id'])
     embedded_tweet_count_list.append(article.count_embedded_tweets())
-    ref_tweet_count.append(article.count_referenced_tweets())
+    ref_tweet_count.append(article.count_mentioned_tweets())
     has_embed_list.append(article.embeds_tweets())
-    has_ref_list.append(article.references_tweets())
+    has_ref_list.append(article.mentions_tweets())
 
 story_tester_df = pd.DataFrame({
     'tweet_id': tweet_id_list,
