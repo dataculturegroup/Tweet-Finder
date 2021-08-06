@@ -3,7 +3,6 @@ lint:
 
 requirements-dev:
 	pip install -q -r requirements/dev.txt
-	python -m spacy download en_core_web_sm
 
 test:
 	pytest
