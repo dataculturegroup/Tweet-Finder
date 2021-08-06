@@ -15,7 +15,7 @@ class TweetFinderTests(unittest.TestCase):
 
     def test_nothing_passsed_in(self):
         try:
-            nothing_article = Article()
+            _ = Article()
             assert False
         except ValueError:
             assert True

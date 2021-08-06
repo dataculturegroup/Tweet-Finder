@@ -1,4 +1,4 @@
-lint.py:
+lint:
 	pylint tweetfinder
 
 requirements-dev:

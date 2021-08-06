@@ -7,7 +7,8 @@ BASIC = ['tweeted', 'to twitter', 'tweets', 'tweeting', 'retweet', 'in a tweet',
                   'wrote on twitter', 'said on twitter']
 
 # twitter phrases from https://arxiv.org/abs/1810.13078
-RONY_2018 = open(os.path.join(module_dir, "data", "twitter-patterns-rony-2018.txt"), "r").readlines()
+with open(os.path.join(module_dir, "data", "twitter-patterns-rony-2018.txt"), "r") as rony_2018_file:
+    RONY_2018 = rony_2018_file.readlines()
 
 # twitter phrases from https://www.tandfonline.com/doi/full/10.1080/1369118X.2021.1874037
 MOLYNEUX_2020 = ['retweet', 'according to a tweet']

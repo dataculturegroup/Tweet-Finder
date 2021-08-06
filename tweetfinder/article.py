@@ -7,7 +7,7 @@ import pycld2 as cld2
 from . import mentions
 
 
-class UnsupportedLanguageException(object):
+class UnsupportedLanguageException(BaseException):
 
     def __init__(self, language:str):
         self.language = language
@@ -16,10 +16,10 @@ class UnsupportedLanguageException(object):
 
 class Article:
 
-    def __init__(self, url: str = None, html: str = None, mentions_list: list = mentions.ALL):
+    def __init__(self, url: str = None, html: str = None, mentions_list: list = None):
         if (url is None) and (html is None):
             raise ValueError('You must pass in either a url or html argument')
-        self.mentions_list = mentions_list
+        self.mentions_list = mentions_list or mentions.ALL
         self.url = url
         if html is None:
             self.html = self._download_article()
@@ -48,8 +48,8 @@ class Article:
         return embeds > 0
 
     def mentions_tweets(self):
-        mentions = self.count_mentioned_tweets()
-        return mentions > 0
+        mentions_list = self.count_mentioned_tweets()
+        return mentions_list > 0
 
     def count_embedded_tweets(self):
         """Get the count of embedded tweets in the article."""
@@ -97,9 +97,9 @@ class Article:
 
     def _validate_language(self) -> bool:
         valid_languages = ['en']
-        isReliable, textBytesFound, details = cld2.detect(self.content)
+        is_reliable, _, details = cld2.detect(self.content)
         detected_language = details[0][1]
-        if isReliable and ( detected_language not in valid_languages):
+        if is_reliable and ( detected_language not in valid_languages):
             raise UnsupportedLanguageException(detected_language)
 
     def _get_twitter_phrases(self):
@@ -146,5 +146,5 @@ class MyHTMLParser(HTMLParser):
                         username = value[username_start_index:-1]
                         tweet_id_start_index = value.find('/')
                         tweet_id = value[tweet_id_start_index:-1]
-                        tweet_dict = {'tweet_id': tweet_id , 'username': username , 'full_url': value}
+                        tweet_dict = {'tweet_id': tweet_id , 'username': username, 'full_url': value}
                         self.tweet_list.append(tweet_dict)
