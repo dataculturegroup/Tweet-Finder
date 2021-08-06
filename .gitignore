@@ -1,0 +1,10 @@
+venv
+*.log
+*.pyc
+.pypirc
+dist
+*.egg
+.idea
+*egg-info*
+.env
+.python-version

@@ -1,28 +1,30 @@
+from html.parser import HTMLParser
 import readability
 from goose3 import Goose
-# from readability import Document
 import requests
-import json
-from html.parser import HTMLParser
-import spacy
-from spacy_langdetect import LanguageDetector
+import pycld2 as cld2
 
+from . import mentions
 
 
 class UnsupportedLanguageException(object):
-    pass
+
+    def __init__(self, language:str):
+        self.language = language
+        super().__init__("Finding mentions is only supported in English right now (not {})".format(self.language))
 
 
-class Article():
+class Article:
 
-    def __init__(self, url=None, html=None):
+    def __init__(self, url: str = None, html: str = None, mentions_list: list = mentions.ALL):
+        if (url is None) and (html is None):
+            raise ValueError('You must pass in either a url or html argument')
+        self.mentions_list = mentions_list
         self.url = url
-        if url is None and html is None:
-            raise ValueError('must input either url or html')
         if html is None:
-            html = self._download_article()
-
-        self.html = html
+            self.html = self._download_article()
+        else:
+            self.html = html
         self.content = self._process()
 
     def _download_article(self):
@@ -93,30 +95,22 @@ class Article():
         tweet_count = len(article.tweets)
         return tweet_count, article.tweets
 
-    def _get_twitter_phrases(self):
-        nlp = spacy.load("en_core_web_sm")
-        nlp.add_pipe(LanguageDetector(), name='language_detector', last=True)
-        doc = nlp(self.content)
-        # document level language detection. Think of it like average language of the document!
-        if doc._.language != 'en':
-            raise UnsupportedLanguageException
-        # twitter phrases from https://www.tandfonline.com/doi/full/10.1080/1369118X.2021.1874037
-        twitter_phrases_1 = ['retweet', 'according to a tweet' ]
-        # Large Scale Tweets Article phrase
-        f = open("twitter_patterns.txt", "r")
-        text = f.read()
-        twitter_phrases_2 = text.split('\n')
+    def _validate_language(self) -> bool:
+        valid_languages = ['en']
+        isReliable, textBytesFound, details = cld2.detect(self.content)
+        detected_language = details[0][1]
+        if isReliable and ( detected_language not in valid_languages):
+            raise UnsupportedLanguageException(detected_language)
 
-        twitter_phrases_3 = ['tweeted', 'to twitter', 'tweets', 'tweeting', 'retweet', 'in a tweet', 'to tweet',
-                           'tweet from','wrote on twitter', 'said on twitter']
-        twitter_phrases = twitter_phrases_1 + twitter_phrases_2 + twitter_phrases_3
+    def _get_twitter_phrases(self):
+        self._validate_language()
         twitter_phrase_count = 0
         # find the first occurrence of the twitter phrase, then continue searching for the
         # next occurrence of the twitter phrase from the index of end of the current twitter phrase
         # instance until there are no more twitter phrases located
         reference_dict_list = []
         article_text = self.content.summary()
-        for twitter_phrase in twitter_phrases:
+        for twitter_phrase in self.mentions_list:
             start_index = 0
             phrase_index = 0
             while phrase_index != -1:
