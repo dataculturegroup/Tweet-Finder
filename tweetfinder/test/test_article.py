@@ -72,6 +72,12 @@ class TestMentionedTweets(TestCase):
 
 class TestParsing(TestCase):
 
+    def testUrlLoading(self):
+        url_article = Article(url="https://www.foxbusiness.com/lifestyle/gas-prices-increasing-midwest-memorial-day-weekend")
+        html_article = _load_fixture('fox-business.html')
+        assert url_article.get_html()[0:40] == html_article.get_html()[0:40]
+        assert url_article.get_content()[0:40] == html_article.get_content()[0:40]
+
     def testBadIntialization(self):
         try:
             _ = Article()
