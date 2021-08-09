@@ -1,115 +1,90 @@
-import unittest
+import os
+from unittest import TestCase
 
 from tweetfinder import Article
 
+this_dir = os.path.dirname(os.path.abspath(__file__))
+fixtures_dir = os.path.join(this_dir, "fixtures")
 
-class TweetFinderTests(unittest.TestCase):
 
-    def setUp(self):
-        self.embedded_article = Article(
-            url='https://www.foxbusiness.com/lifestyle/gas-prices-increasing-midwest-memorial-day-weekend')
-        self.reference_only_article = Article(
-            url='https://www.theguardian.com/world/2021/may/13/how-covid-lockdown-forged-unlikely-friendships')
-        self.empty_article = Article(
-            url='https://www.npr.org/sections/health-shots/2021/05/18/997461471/its-time-for-americas-fixation-with-herd-immunity-to-end-scientists-say')
+'''
+This utilizes a few webpages as static test cases:
+ * [fox-business](https://www.foxbusiness.com/lifestyle/gas-prices-increasing-midwest-memorial-day-weekend)
+ * [guardian](https://www.theguardian.com/world/2021/may/13/how-covid-lockdown-forged-unlikely-friendships)
+ * [npr](https://www.npr.org/sections/health-shots/2021/05/18/997461471/its-time-for-americas-fixation-with-herd-immunity-to-end-scientists-say) 
+'''
 
-    def test_nothing_passsed_in(self):
+
+def _load_fixture(filename):
+    # If the article has a link to a twitter account that should not return as an embed
+    with open(os.path.join(fixtures_dir, filename)) as f:
+        article_html = f.read()
+    article = Article(html=article_html)
+    return article
+
+
+class TestEmbeddedTweets(TestCase):
+
+    def testLinkNoEmbeds(self):
+        # make sure a link to twitter in the HTML doesn't cound as an embedded tweet
+        article = _load_fixture("1987377089.html")
+        assert article.count_mentioned_tweets() == 0
+        assert article.count_embedded_tweets() == 0
+
+    def testMultipleEmbeds(self):
+        article = _load_fixture("fox-business.html")
+        # make sure some embedded tweets were detected at all
+        assert article.embeds_tweets() is True
+        # make sure the number of embedded tweets is right
+        embeds = article.list_embedded_tweets()
+        assert len(embeds) == 4
+        assert len(embeds) == article.count_embedded_tweets()
+        # make sure the usernames whose tweets are embedded are correct
+        embedded_usernames = set([t['username'] for t in embeds])
+        assert len(embedded_usernames) == 2
+        assert embedded_usernames[0] == 'GasBuddyGuy'
+        assert embedded_usernames[1] == 'AAA_Travel'
+
+    def testNoEmbeds(self):
+        article = _load_fixture("npr.html")
+        assert article.embeds_tweets() is False
+        assert article.count_embedded_tweets() == 0
+        article = _load_fixture("guardian.html")
+        assert article.embeds_tweets() is False
+        assert article.count_embedded_tweets() == 0
+
+
+class TestMentionedTweets(TestCase):
+
+    def testMultipleMentionsAndNoEmbeds(self):
+        article = _load_fixture("guardian.html")
+        assert article.mentions_tweets() is True
+        assert article.embeds_tweets() is False
+        mentions = article.list_mentioned_tweets()
+        assert len(mentions) == article.count_mentioned_tweets()
+        assert len(mentions) == 3
+
+    def testNoMentions(self):
+        article = _load_fixture("npr.html")
+        assert article.mentions_tweets() is False
+        assert article.count_mentioned_tweets() == 0
+
+
+class TestParsing(TestCase):
+
+    def testBadIntialization(self):
         try:
             _ = Article()
             assert False
         except ValueError:
             assert True
 
-    # count referenced tweets
-    def test_count_referenced_tweets_ref_only(self):
-        reference_only_tweet_refs = self.reference_only_article.count_mentioned_tweets()
-        assert reference_only_tweet_refs == 3
+    def testGetContent(self):
+        article = _load_fixture("fox-business.html")
+        content = article.get_content()
+        assert content.startswith('<html><body><div><div class="article-body">')
 
-    def test_count_referenced_tweets_embeds_only(self):
-        embeds_tweet_refs = self.embedded_article.count_mentioned_tweets()
-        assert embeds_tweet_refs == 6
-
-    def test_count_referenced_tweets_empty_article(self):
-        empty_article_tweet_refs = self.empty_article.count_mentioned_tweets()
-        assert empty_article_tweet_refs == 0
-
-    # count embedded tweets
-    def test_count_embedded_tweets_ref_only(self):
-        embeds = self.reference_only_article.count_embedded_tweets()
-        assert embeds == 0
-
-    def test_count_embedded_tweets_embeds_only(self):
-        embeds = self.embedded_article.count_embedded_tweets()
-        assert embeds == 4
-
-    def test_count_embeds_tweets_empty_article(self):
-        embeds = self.empty_article.count_embedded_tweets()
-        assert embeds == 0
-
-    # list referenced tweets
-    def test_list_referenced_tweets_ref_only(self):
-        reference_only_tweet_refs = self.reference_only_article.list_mentioned_tweets()
-        reference_1 = {'start_index': 0, 'phrase': ''}
-        reference_2 = {'start_index': 0, 'phrase': ''}
-        reference_3 = {'start_index': 0, 'phrase': ''}
-        refs_list = [reference_1, reference_2, reference_3]
-        assert reference_only_tweet_refs == refs_list
-
-    def test_list_referenced_tweets_embeds_only(self):
-        embeds_tweet_refs = self.embedded_article.list_mentioned_tweets()
-        reference_1 = {'start_index': 0, 'phrase': ''}
-        reference_2 = {'start_index': 0, 'phrase': ''}
-        reference_3 = {'start_index': 0, 'phrase': ''}
-        reference_4 = {'start_index': 0, 'phrase': ''}
-        reference_5 = {'start_index': 0, 'phrase': ''}
-        reference_6 = {'start_index': 0, 'phrase': ''}
-        refs_list = [reference_1, reference_2, reference_3, reference_4, reference_5, reference_6]
-        assert embeds_tweet_refs == refs_list
-
-    def test_list_referenced_tweets_empty_article(self):
-        empty_article_tweet_refs = self.empty_article.list_mentioned_tweets()
-        assert len(empty_article_tweet_refs) == 0
-
-    # list embedded tweets
-    def test_list_embedded_tweets_ref_only(self):
-        embeds = self.reference_only_article.list_embedded_tweets()
-        assert len(embeds) == 0
-
-    def test_list_embedded_tweets_embeds_only(self):
-        embeds = self.embedded_article.list_embedded_tweets()
-        tweet_1 = {'tweet_id': 0, 'username': '', 'full_url': ''}
-        tweet_2 = {'tweet_id': 0, 'username': '', 'full_url': ''}
-        tweet_3 = {'tweet_id': 0, 'username': '', 'full_url': ''}
-        tweet_4 = {'tweet_id': 0, 'username': '', 'full_url': ''}
-        embed_list = [tweet_1, tweet_2, tweet_3, tweet_4]
-        assert embeds == embed_list
-
-    def test_list_embeds_tweets_empty_article(self):
-        embeds = self.empty_article.list_embedded_tweets()
-        assert len(embeds) == 0
-
-    # get content
-    def test_get_content(self):
-        content = self.embedded_article.get_content()
-        assert content == ''
-
-    # get html
-    def test_get_html(self):
-        html = self.embedded_article.get_html()
-        assert html == ''
-
-    # references tweets
-    def test_references_tweets(self):
-        references_embedded_article = self.embedded_article.mentions_tweets()
-        references_refs_only_article = self.reference_only_article.mentions_tweets()
-        references_empty_article = self.empty_article.mentions_tweets()
-        assert references_empty_article is False and references_embedded_article is True and \
-               references_refs_only_article is True
-
-    # embeds tweets
-    def test_embeds_tweets(self):
-        embeds_embedded_article = self.embedded_article.embeds_tweets()
-        embeds_refs_only_article = self.reference_only_article.embeds_tweets()
-        embeds_empty_article = self.empty_article.embeds_tweets()
-        assert embeds_empty_article is False and embeds_refs_only_article is False and \
-               embeds_embedded_article is True
+    def testGetHtml(self):
+        article = _load_fixture("fox-business.html")
+        html = article.get_html()
+        assert html.startswith('<!doctype html>')

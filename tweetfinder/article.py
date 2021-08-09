@@ -33,8 +33,7 @@ class Article:
         return r.text.lower()
 
     def _process(self):
-        html = self.html
-        self._document = readability.Document(html)
+        self._document = readability.Document(self.html)
         self._content = self._document.summary()
 
     def get_html(self):
@@ -146,5 +145,5 @@ class MyHTMLParser(HTMLParser):
                         username = value[username_start_index:-1]
                         tweet_id_start_index = value.find('/')
                         tweet_id = value[tweet_id_start_index:-1]
-                        tweet_dict = {'tweet_id': tweet_id , 'username': username, 'full_url': value}
+                        tweet_dict = {'tweet_id': tweet_id, 'username': username, 'full_url': value}
                         self.tweet_list.append(tweet_dict)
