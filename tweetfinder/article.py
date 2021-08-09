@@ -25,7 +25,7 @@ class Article:
             self.html = self._download_article()
         else:
             self.html = html
-        self.content = self._process()
+        self._process()
 
     def _download_article(self):
         url = self.url
@@ -34,14 +34,14 @@ class Article:
 
     def _process(self):
         html = self.html
-        article_text = readability.Document(html)
-        return article_text
+        self._document = readability.Document(html)
+        self._content = self._document.summary()
 
     def get_html(self):
         return self.html
 
     def get_content(self):
-        return self.content
+        return self._content
 
     def embeds_tweets(self):
         embeds = self.count_embedded_tweets()
@@ -82,9 +82,9 @@ class Article:
         return twitter_mentions[1]
 
     def _get_calc_tweets(self):
-        article_text = self.content
+        article_text = self._content
         html_parser = MyHTMLParser()
-        html_parser.feed(article_text.summary())
+        html_parser.feed(self._content)
         tweet_embed_count = html_parser.tweet_embed_count
         tweet_list = html_parser.tweet_list
         return tweet_embed_count, tweet_list
@@ -97,7 +97,7 @@ class Article:
 
     def _validate_language(self) -> bool:
         valid_languages = ['en']
-        is_reliable, _, details = cld2.detect(self.content)
+        is_reliable, _, details = cld2.detect(self._content)
         detected_language = details[0][1]
         if is_reliable and ( detected_language not in valid_languages):
             raise UnsupportedLanguageException(detected_language)
@@ -109,7 +109,7 @@ class Article:
         # next occurrence of the twitter phrase from the index of end of the current twitter phrase
         # instance until there are no more twitter phrases located
         mentions_dict_list = []
-        article_text = self.content.summary()
+        article_text = self._content
         for twitter_phrase in self.mentions_list:
             start_index = 0
             phrase_index = 0
