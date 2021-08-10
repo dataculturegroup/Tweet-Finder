@@ -52,13 +52,8 @@ class Article:
 
     def count_embedded_tweets(self):
         """Get the count of embedded tweets in the article."""
-        goose = self._get_tweets_goose()
-        goose_count = goose[0]
-        calc = self._get_calc_tweets()
-        calc_count = calc[0]
-        if goose_count >= calc_count:
-            return goose_count
-        return calc_count
+        tweet_count = len(self.list_embedded_tweets())
+        return tweet_count
 
     def count_mentioned_tweets(self):
         """Get the count of tweet mentions in the article."""
@@ -71,9 +66,8 @@ class Article:
         calc_tweets = self._get_calc_tweets()
         calc_tweet_list = calc_tweets[1]
         goose_tweet_list = goose_tweets[1]
-        if len(goose_tweet_list) > len(calc_tweet_list):
-            return goose_tweet_list
-        return calc_tweet_list
+        tweet_list = goose_tweet_list + calc_tweet_list
+        return set(tweet_list)
 
     def list_mentioned_tweets(self):
         """Get a list of starting positions for each of the twitter mentions in the text."""
@@ -139,7 +133,7 @@ class MyHTMLParser(HTMLParser):
             for name, value in attrs:
                 if name == 'href':
                     # check if twitter.com is in the href url
-                    if 'twitter.com' in value:
+                    if 'twitter.com' in value and '@' in value:
                         self.tweet_embed_count += 1
                         username_start_index = value.find('@')
                         username = value[username_start_index:-1]
