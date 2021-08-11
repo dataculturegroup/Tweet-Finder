@@ -4,7 +4,7 @@ module_dir = os.path.dirname(os.path.abspath(__file__))
 
 # phrases we found to be mentions of tweets or tweet activity from scanning articles ourselves
 BASIC = ['tweeted', 'to twitter', 'tweets', 'tweeting', 'retweet', 'in a tweet', 'to tweet', 'tweet from',
-                  'wrote on twitter', 'said on twitter']
+         'wrote on twitter', 'said on twitter', 'from a tweet']
 
 # twitter phrases from https://arxiv.org/abs/1810.13078
 with open(os.path.join(module_dir, "data", "twitter-patterns-rony-2018.txt"), "r") as rony_2018_file:

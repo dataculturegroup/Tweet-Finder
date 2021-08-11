@@ -1,6 +1,5 @@
-from html.parser import HTMLParser
+from bs4 import BeautifulSoup
 import readability
-from goose3 import Goose
 import requests
 import pycld2 as cld2
 
@@ -19,74 +18,85 @@ class Article:
     def __init__(self, url: str = None, html: str = None, mentions_list: list = None):
         if (url is None) and (html is None):
             raise ValueError('You must pass in either a url or html argument')
-        self.mentions_list = mentions_list or mentions.ALL
-        self.url = url
+        self._mentions_list = mentions_list or mentions.ALL
+        self._url = url
         if html is None:
-            self.html = self._download_article()
+            self._html = self._download_article()
         else:
-            self.html = html
+            self._html = html
         self._process()
 
     def _download_article(self):
-        url = self.url
+        url = self._url
         r = requests.get(url)
         return r.text.lower()
 
     def _process(self):
-        self._document = readability.Document(self.html)
+        self._document = readability.Document(self._html)
         self._content = self._document.summary()
+        self._soup = BeautifulSoup(self._html, "lxml")
+        self._embeds = self._find_embeds()
+        self._mentions = self._find_mentions()
 
     def get_html(self):
-        return self.html
+        return self._html
 
     def get_content(self):
         return self._content
 
     def embeds_tweets(self):
-        embeds = self.count_embedded_tweets()
-        return embeds > 0
+        return len(self._embeds) > 0
 
     def mentions_tweets(self):
-        mentions_list = self.count_mentioned_tweets()
-        return mentions_list > 0
+        return len(self._mentions) > 0
 
     def count_embedded_tweets(self):
         """Get the count of embedded tweets in the article."""
-        tweet_count = len(self.list_embedded_tweets())
-        return tweet_count
+        return len(self._embeds)
 
     def count_mentioned_tweets(self):
         """Get the count of tweet mentions in the article."""
-        twitter_mentions = self._get_twitter_phrases()
-        return twitter_mentions[0]
+        return len(self._mentions)
 
     def list_embedded_tweets(self):
         """Get a list of tweets from the article."""
-        goose_tweets = self._get_tweets_goose()
-        calc_tweets = self._get_calc_tweets()
-        calc_tweet_list = calc_tweets[1]
-        goose_tweet_list = goose_tweets[1]
-        tweet_list = goose_tweet_list + calc_tweet_list
-        return set(tweet_list)
+        return self._embeds
 
     def list_mentioned_tweets(self):
         """Get a list of starting positions for each of the twitter mentions in the text."""
-        twitter_mentions = self._get_twitter_phrases()
-        return twitter_mentions[1]
+        return self._mentions
 
-    def _get_calc_tweets(self):
-        article_text = self._content
-        html_parser = MyHTMLParser()
-        html_parser.feed(self._content)
-        tweet_embed_count = html_parser.tweet_embed_count
-        tweet_list = html_parser.tweet_list
-        return tweet_embed_count, tweet_list
-
-    def _get_tweets_goose(self):
-        g = Goose()
-        article = g.extract(raw_html=self.html)
-        tweet_count = len(article.tweets)
-        return tweet_count, article.tweets
+    def _find_embeds(self):
+        tweets = []
+        # Twitter recommends embedding as block quotes
+        blockquotes = self._soup.find_all('blockquote')
+        for b in blockquotes:
+            is_embedded_tweet = False
+            # check the official way of doing it
+            if b['class'] == 'twitter-tweet':
+                is_embedded_tweet = True
+            # But we found some sites don't use that class, so check if there is a link to twitter in there.
+            # In our experimentation this produces better results than just checking the class.
+            links = b.find_all('a')
+            twitter_link = None
+            for link in links:
+                if 'twitter.com' in link['href']:
+                    is_embedded_tweet = True
+                    twitter_url = link['href']
+            if is_embedded_tweet:
+                username_start_index = twitter_url.find('@')
+                username = twitter_url[username_start_index:-1]
+                tweet_id_start_index = twitter_url.find('/')
+                tweet_id = twitter_url[tweet_id_start_index:-1]
+                tweet_info = {'tweet_id': tweet_id, 'username': username, 'full_url': twitter_url}
+                tweets.append(tweet_info)
+        # some people (CNN, others) embed with JS
+        divs = self._soup.find_all('div', class_="embed-twitter")
+        for d in divs:
+            if d['data-embed-id']:
+                tweet_info = {'tweet_id': d['data-embed-id']}
+                tweets.append(tweet_info)
+        return tweets
 
     def _validate_language(self) -> bool:
         valid_languages = ['en']
@@ -95,49 +105,22 @@ class Article:
         if is_reliable and ( detected_language not in valid_languages):
             raise UnsupportedLanguageException(detected_language)
 
-    def _get_twitter_phrases(self):
+    def _find_mentions(self):
         self._validate_language()
-        twitter_phrase_count = 0
         # find the first occurrence of the twitter phrase, then continue searching for the
         # next occurrence of the twitter phrase from the index of end of the current twitter phrase
         # instance until there are no more twitter phrases located
         mentions_dict_list = []
         article_text = self._content
-        for twitter_phrase in self.mentions_list:
+        for twitter_phrase in self._mentions_list:
             start_index = 0
             phrase_index = 0
             while phrase_index != -1:
                 phrase_index = article_text.find(twitter_phrase, start_index)
                 start_index = phrase_index + len(twitter_phrase)
                 if phrase_index != -1:
-                    twitter_phrase_count += 1
                     mention_dict = {'start_index': start_index, 'phrase': twitter_phrase}
                     mentions_dict_list.append(mention_dict)
         # returns a tuple of the twitter phrase count and a list of the starting indices of each of the
         # twitter phrases
-        return twitter_phrase_count, mentions_dict_list
-
-
-class MyHTMLParser(HTMLParser):
-
-    def __init__(self):
-        self.tweet_embed_count = 0
-        self.twitter_phrase_count = 0
-        self.tweet_list = []
-        HTMLParser.__init__(self)
-
-    def handle_starttag(self, tag, attrs):
-        # check for anchor tags
-        if tag == 'a':
-            # check if href is defined in the anchor tag
-            for name, value in attrs:
-                if name == 'href':
-                    # check if twitter.com is in the href url
-                    if 'twitter.com' in value and '@' in value:
-                        self.tweet_embed_count += 1
-                        username_start_index = value.find('@')
-                        username = value[username_start_index:-1]
-                        tweet_id_start_index = value.find('/')
-                        tweet_id = value[tweet_id_start_index:-1]
-                        tweet_dict = {'tweet_id': tweet_id, 'username': username, 'full_url': value}
-                        self.tweet_list.append(tweet_dict)
+        return mentions_dict_list
