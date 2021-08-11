@@ -74,14 +74,14 @@ class Article:
         for b in blockquotes:
             is_embedded_tweet = False
             # check the official way of doing it
-            if b['class'] == 'twitter-tweet':
+            if ('class' in b) and (b['class'] == 'twitter-tweet'):
                 is_embedded_tweet = True
             # But we found some sites don't use that class, so check if there is a link to twitter in there.
             # In our experimentation this produces better results than just checking the class.
             links = b.find_all('a')
             twitter_link = None
             for link in links:
-                if 'twitter.com' in link['href']:
+                if ('href' in link) and ('twitter.com' in link['href']):
                     is_embedded_tweet = True
                     twitter_url = link['href']
             if is_embedded_tweet:
@@ -94,7 +94,7 @@ class Article:
         # some people (CNN, others) embed with JS
         divs = self._soup.find_all('div', class_="embed-twitter")
         for d in divs:
-            if d['data-embed-id']:
+            if 'data-embed-id' in d:
                 tweet_info = {'tweet_id': d['data-embed-id']}
                 tweets.append(tweet_info)
         return tweets
