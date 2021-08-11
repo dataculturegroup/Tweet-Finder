@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(
 logger = logging.getLogger(__name__)
 
 # must have a `stories_id` and `url` column in it (we source stories for testing from Media Cloud)
-STORY_CSV_FILE = "2021-random-stories.csv"
+STORY_CSV_FILE = "scripts/2021-random-stories.csv"
 
 stories_df = pd.read_csv(STORY_CSV_FILE)
 logger.info("Loaded {} stories from {}".format(len(stories_df.index), STORY_CSV_FILE))
