@@ -8,6 +8,9 @@ from . import mentions
 
 logger = logging.getLogger(__name__)
 
+# when we find a mention, we include this many characters of context before and after it
+MENTIONS_CONTEXT_WINDOW_SIZE = 100
+
 
 class UnsupportedLanguageException(BaseException):
 
@@ -125,10 +128,15 @@ class Article:
             phrase_index = 0
             while phrase_index != -1:
                 phrase_index = article_text.find(twitter_phrase, start_index)
-                start_index = phrase_index + len(twitter_phrase)
+                # this is the start index into the *content*, not the raw html
+                start_index = phrase_index
                 if phrase_index != -1:
-                    mention_dict = {'start_index': start_index, 'phrase': twitter_phrase}
+                    context_start = max(0, phrase_index - MENTIONS_CONTEXT_WINDOW_SIZE)
+                    context_end = min(len(article_text), phrase_index + len(twitter_phrase) + MENTIONS_CONTEXT_WINDOW_SIZE)
+                    context = article_text[context_start:context_end]
+                    mention_dict = {'phrase': twitter_phrase, 'context': context, 'content_start_index': start_index}
                     mentions_dict_list.append(mention_dict)
+                    start_index = phrase_index + len(twitter_phrase)
         # returns a tuple of the twitter phrase count and a list of the starting indices of each of the
         # twitter phrases
         return mentions_dict_list

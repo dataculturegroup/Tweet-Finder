@@ -69,6 +69,10 @@ class TestMentionedTweets(TestCase):
         mentions = article.list_mentioned_tweets()
         assert len(mentions) == article.count_mentioned_tweets()
         assert len(mentions) == 2
+        assert mentions[0]['phrase'] == "tweeted"
+        assert "randomly tweeted something" in mentions[0]['context']
+        assert mentions[1]['phrase'] == "from a tweet"
+        assert "virtually with friends I made from a tweet" in mentions[1]['context']
 
     def testMentionInLinkNotText(self):
         # this article has a mention in a link - "tweets" - not in text so that shouldn't count
