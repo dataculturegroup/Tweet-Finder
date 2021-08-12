@@ -8,3 +8,4 @@ dist
 *egg-info*
 .env
 .python-version
+scripts/stories/*.json
