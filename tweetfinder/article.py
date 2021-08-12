@@ -1,14 +1,17 @@
 from bs4 import BeautifulSoup
 import readability
 import requests
+import logging
 import pycld2 as cld2
 
 from . import mentions
 
+logger = logging.getLogger(__name__)
+
 
 class UnsupportedLanguageException(BaseException):
 
-    def __init__(self, language:str):
+    def __init__(self, language: str):
         self.language = language
         super().__init__("Finding mentions is only supported in English right now (not {})".format(self.language))
 
@@ -101,10 +104,14 @@ class Article:
 
     def _validate_language(self) -> bool:
         valid_languages = ['en']
-        is_reliable, _, details = cld2.detect(self._content)
-        detected_language = details[0][1]
-        if is_reliable and ( detected_language not in valid_languages):
-            raise UnsupportedLanguageException(detected_language)
+        try:
+            is_reliable, _, details = cld2.detect(self._content)
+            detected_language = details[0][1]
+            if is_reliable and (detected_language not in valid_languages):
+                raise UnsupportedLanguageException(detected_language)
+        except cld2.error:
+            # if there was some weird unicode then assume it isn't english
+            raise UnsupportedLanguageException("Undetectable")
 
     def _find_mentions(self):
         self._validate_language()
