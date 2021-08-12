@@ -7,6 +7,8 @@ from tweetfinder import Article
 logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(name)s | %(message)s')
 logger = logging.getLogger(__name__)
 
+FROM_CSV = False
+
 # must have a `stories_id` and `url` column in it (we source stories for testing from Media Cloud)
 STORY_CSV_FILE = "scripts/2021-random-stories.csv"
 
@@ -21,14 +23,18 @@ ref_tweet_count = []
 has_embed_list = []
 has_ref_list = []
 for index, row in stories_df.iterrows():
-    url = row['url']
-    article = Article(url=row['url'])
-    url_list.append(url)
-    stories_id_list.append(row['stories_id'])
-    embedded_tweet_count_list.append(article.count_embedded_tweets())
-    ref_tweet_count.append(article.count_mentioned_tweets())
-    has_embed_list.append(article.embeds_tweets())
-    has_ref_list.append(article.mentions_tweets())
+    try:
+        url = row['url']
+        article = Article(url=row['url'])
+        url_list.append(url)
+        stories_id_list.append(row['stories_id'])
+        embedded_tweet_count_list.append(article.count_embedded_tweets())
+        ref_tweet_count.append(article.count_mentioned_tweets())
+        has_embed_list.append(article.embeds_tweets())
+        has_ref_list.append(article.mentions_tweets())
+    except:
+        # probably a fetch or parse error, so just ignore the story
+        continue
 
 story_tester_df = pd.DataFrame({
     'url': url_list,

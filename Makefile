@@ -8,7 +8,7 @@ test:
 	pytest
 
 evaluate:
-	python -m scripts.evaluate
+	python -m scripts.evaluate-from-csv
 
 build-release:
 	find . -name '.DS_Store' -type f -delete
