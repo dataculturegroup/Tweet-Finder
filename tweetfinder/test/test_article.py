@@ -70,6 +70,11 @@ class TestMentionedTweets(TestCase):
         assert len(mentions) == article.count_mentioned_tweets()
         assert len(mentions) == 2
 
+    def testMentionInLinkNotText(self):
+        # this article has a mention in a link - "tweets" - not in text so that shouldn't count
+        article = Article("https://www.theguardian.com/film/2020/jan/01/the-most-exciting-movies-of-2020-horror")
+        assert article.mentions_tweets() is False
+
     def testNoMentions(self):
         article = _load_fixture("npr.html")
         assert article.mentions_tweets() is False
