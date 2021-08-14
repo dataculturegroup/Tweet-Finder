@@ -40,7 +40,7 @@ class Article:
     def _process(self):
         self._document = readability.Document(self._html)
         self._content = self._document.summary()
-        self._soup = BeautifulSoup(self._html, "lxml")
+        self._soup = BeautifulSoup(self._content, "lxml")
         # lets parse it all here so we don't have to do it more than once
         self._embeds = self._find_embeds()
         self._mentions = self._find_mentions()
