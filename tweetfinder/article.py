@@ -42,6 +42,7 @@ class Article:
         self._content = self._document.summary()
         self._soup = BeautifulSoup(self._html, "lxml")
         self._stripped_content = self._soup.get_text()
+        self._soup = BeautifulSoup(self._content, "lxml")
         # lets parse it all here so we don't have to do it more than once
         self._embeds = self._find_embeds()
         self._mentions = self._find_mentions()
@@ -106,16 +107,16 @@ class Article:
                 tweets.append(tweet_info)
         return tweets
 
-    # def _validate_language(self) -> bool:
-    #     valid_languages = ['en']
-    #     try:
-    #         is_reliable, _, details = cld2.detect(self._content)
-    #         detected_language = details[0][1]
-    #         if is_reliable and (detected_language not in valid_languages):
-    #             raise UnsupportedLanguageException(detected_language)
-    #     except cld2.error:
-    #         # if there was some weird unicode then assume it isn't english
-    #         raise UnsupportedLanguageException("Undetectable")
+    def _validate_language(self) -> bool:
+        valid_languages = ['en']
+        try:
+            is_reliable, _, details = cld2.detect(self._content)
+            detected_language = details[0][1]
+            if is_reliable and (detected_language not in valid_languages):
+                raise UnsupportedLanguageException(detected_language)
+        except cld2.error:
+            # if there was some weird unicode then assume it isn't english
+            raise UnsupportedLanguageException("Undetectable")
 
     def _find_mentions(self):
         # self._validate_language()
