@@ -7,8 +7,11 @@ requirements-dev:
 test:
 	pytest
 
-evaluate:
+evaluate-csv:
 	python -m scripts.evaluate-from-csv
+
+evaluate-files:
+	python -m scripts.evaluate-from-files
 
 build-release:
 	find . -name '.DS_Store' -type f -delete
