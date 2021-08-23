@@ -1,5 +1,6 @@
 import os
 from unittest import TestCase
+import logging
 from goose3 import Goose
 
 from tweetfinder import Article
@@ -8,6 +9,7 @@ import pandas as pd
 this_dir = os.path.dirname(os.path.abspath(__file__))
 fixtures_dir = os.path.join(this_dir, "fixtures")
 
+logging.getLogger('readability.readability').setLevel(logging.DEBUG)
 
 '''
 This utilizes a few webpages as static test cases:
@@ -61,12 +63,12 @@ class TestEmbeddedTweets(TestCase):
         assert article.count_embedded_tweets() == 0
 
     def testHandCodedList(self):
-        tweet_embed_data = pd.read_csv('tweet_embeds_data.csv')
+        tweet_embed_data = pd.read_csv(os.path.join(fixtures_dir, 'tweet_embeds_data.csv'))
         for _, row in tweet_embed_data.iterrows():
-            url = row['url']
-            article = Article(url=url)
+            article = Article(url=row['url'])
             calculated_tweet_count = article.count_embedded_tweets()
             true_tweet_count = row['tweet_count']
+
             assert calculated_tweet_count == true_tweet_count
 
 
