@@ -120,7 +120,7 @@ class TestArticleViaSelenium(TestCase):
         chrome_options.add_argument('--headless')
         self.driver = webdriver.Chrome('chromedriver', options=chrome_options)
 
-    def _loadViaSelenium(self, url: str, delay_secs: int = 3):
+    def _loadViaSelenium(self, url: str, delay_secs: int = 1):
         self.driver.get(url)
         # let it render the javscript, then grab the *rendered* html, not the source_html
         time.sleep(delay_secs)  # hopefully it renders after this much time
