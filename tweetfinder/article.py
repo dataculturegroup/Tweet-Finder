@@ -91,26 +91,36 @@ class Article:
             links = b.find_all('a')
             twitter_url = None
             for link in links:
-                if link['href'] and ('twitter.com' in link['href']):
+                if link.has_attr('href') and ('twitter.com' in link['href']):
                     is_embedded_tweet = True
                     twitter_url = link['href']
             if is_embedded_tweet:
                 try:
                     info = tweet_status_url_pattern.match(twitter_url).groups()
-                    tweet_info = {'tweet_id': info[2], 'username': info[0], 'full_url': twitter_url}
+                    tweet_info = dict(tweet_id=info[2], username=info[0], full_url=twitter_url,
+                                      html_source='blockquote url pattern')
                 except Exception:  # some other format
                     username_start_index = twitter_url.find('@')
                     username = twitter_url[username_start_index:-1]
                     tweet_id_start_index = twitter_url.find('/')
                     tweet_id = twitter_url[tweet_id_start_index:-1]
-                    tweet_info = {'tweet_id': tweet_id, 'username': username, 'full_url': twitter_url}
+                    tweet_info = dict(tweet_id=tweet_id, username=username, full_url=twitter_url,
+                                      html_source='blockquote url fallback')
                 tweets.append(tweet_info)
-        # some people (CNN, others) embed with JS
+        # some people do it differently, (CNN, others) embed with like this
         divs = self._html_soup.find_all('div', class_="embed-twitter")
         for d in divs:
-            if 'data-embed-id' in d:
-                tweet_info = {'tweet_id': d['data-embed-id']}
+            if d.has_attr('data-embed-id'):
+                tweet_info = dict(tweet_id=d['data-embed-id'], html_source='div with data-embed-id')
                 tweets.append(tweet_info)
+        # check if we are looking at HTML already rendered by JS and transformed into an iframe of content
+        divs = self._html_soup.find_all('div', class_="twitter-tweet-rendered")
+        for d in divs:
+            iframes = d.find_all('iframe')
+            for iframe in iframes:
+                if iframe.has_attr('data-tweet-id'):
+                    tweet_info = dict(tweet_id=iframe['data-tweet-id'], html_source='rendered iframe')
+                    tweets.append(tweet_info)
         return tweets
 
     def _validate_language(self):

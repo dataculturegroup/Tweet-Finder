@@ -2,6 +2,9 @@ import os
 from unittest import TestCase
 import logging
 from goose3 import Goose
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+import time
 
 from tweetfinder import Article
 import pandas as pd
@@ -62,15 +65,6 @@ class TestEmbeddedTweets(TestCase):
         assert article.embeds_tweets() is False
         assert article.count_embedded_tweets() == 0
 
-    def testHandCodedList(self):
-        tweet_embed_data = pd.read_csv(os.path.join(fixtures_dir, 'tweet_embeds_data.csv'))
-        for _, row in tweet_embed_data.iterrows():
-            article = Article(url=row['url'])
-            calculated_tweet_count = article.count_embedded_tweets()
-            true_tweet_count = row['tweet_count']
-
-            assert calculated_tweet_count == true_tweet_count
-
 
 class TestMentionedTweets(TestCase):
 
@@ -115,3 +109,41 @@ class TestParsing(TestCase):
         article = _load_fixture("npr.html")
         html = article.get_html()
         assert html.startswith('<!doctype html>')
+
+
+class TestArticleViaSelenium(TestCase):
+
+    def setUp(self):
+        # setup a headless chrome we can re-use it in all the tests within this class
+        chrome_options = Options()
+        chrome_options.add_argument('--mute-audio')
+        chrome_options.add_argument('--headless')
+        self.driver = webdriver.Chrome('chromedriver', options=chrome_options)
+
+    def _loadViaSelenium(self, url: str, delay_secs: int = 3):
+        self.driver.get(url)
+        # let it render the javscript, then grab the *rendered* html, not the source_html
+        time.sleep(delay_secs)  # hopefully it renders after this much time
+        rendered_html = self.driver.find_element_by_tag_name('html').get_attribute('innerHTML')
+        # now that we have HTML rendered by Javascript, we can check for tweets
+        return Article(html=rendered_html)
+
+    def testSeleniumLoad(self):
+        # this URL has 3 embedded tweets that are added by Javascript
+        url = "https://www.foxnews.com/politics/black-lives-matter-hamas-terrorists-israeli"
+        article = self._loadViaSelenium(url)
+        assert article.count_embedded_tweets() == 3
+
+    def testHandCodedList(self):
+        tweet_embed_data = pd.read_csv(os.path.join(fixtures_dir, 'tweet_embeds_data.csv'))
+        for _, row in tweet_embed_data.iterrows():
+            if row['embedded_via_js'] == 1:
+                article = self._loadViaSelenium(row['url'])
+            else:
+                article = Article(row['url'])
+            calculated_tweet_count = article.count_embedded_tweets()
+            true_tweet_count = row['tweet_count']
+            if calculated_tweet_count != true_tweet_count:
+                logging.warn(row['url'])
+            assert calculated_tweet_count == true_tweet_count
+
