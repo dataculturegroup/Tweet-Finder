@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 # when we find a mention, we include this many characters of context before and after it
 MENTIONS_CONTEXT_WINDOW_SIZE = 100
 
+# how many seconds to wait when trying to load a webpage via GET
+DEFAULT_TIMEOUT = 5
+
 
 class UnsupportedLanguageException(BaseException):
 
@@ -22,11 +25,12 @@ class UnsupportedLanguageException(BaseException):
 
 class Article:
 
-    def __init__(self, url: str = None, html: str = None, mentions_list: list = None):
+    def __init__(self, url: str = None, html: str = None, mentions_list: list = None, timeout: int = None):
         if (url is None) and (html is None):
             raise ValueError('You must pass in either a url or html argument')
-        self._mentions_list = mentions_list or mentions.ALL
         self._url = url
+        self._mentions_list = mentions_list or mentions.ALL
+        self._download_timeout = timeout or DEFAULT_TIMEOUT
         if html is None:
             self._html = self._download_article()
         else:
@@ -35,7 +39,7 @@ class Article:
 
     def _download_article(self):
         url = self._url
-        r = requests.get(url)
+        r = requests.get(url, self._download_timeout)
         return r.text.lower()
 
     def _process(self):
@@ -84,7 +88,7 @@ class Article:
         for b in blockquotes:
             is_embedded_tweet = False
             # check the official way of doing it
-            if (b['class'] is not None) and ('twitter-tweet' in b['class']):  # this is an array of the CSS classes
+            if b.has_attr('class') and ('twitter-tweet' in b['class']):  # this is an array of the CSS classes
                 is_embedded_tweet = True
             # But we found some sites don't use that class, so check if there is a link to twitter in there.
             # In our experimentation this produces better results than just checking the class.
