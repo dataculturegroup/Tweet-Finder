@@ -143,7 +143,7 @@ class TestArticleViaSelenium(TestCase):
                 article = Article(row['url'])
             calculated_tweet_count = article.count_embedded_tweets()
             true_tweet_count = row['tweet_count']
-            if calculated_tweet_count != true_tweet_count:
-                logging.warn(row['url'])
+            #if calculated_tweet_count != true_tweet_count:
+            #    logging.warning(row['url'])
             assert calculated_tweet_count == true_tweet_count
 
