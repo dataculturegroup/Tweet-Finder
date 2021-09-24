@@ -1,8 +1,7 @@
 Tweet Finder
 ============
 
-A simple Python library for finding Tweets embedded, and mentions of Tweets, in online news articles.
-
+A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets.
 
 Quickstart
 ----------
