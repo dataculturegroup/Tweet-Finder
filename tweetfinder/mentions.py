@@ -1,3 +1,7 @@
+"""
+Provide various sets of snippets that count as "mentions" of tweets in text. These are ones created from our work,
+and also sourced from other academic paper authors (as linked to below).
+"""
 import os
 
 module_dir = os.path.dirname(os.path.abspath(__file__))

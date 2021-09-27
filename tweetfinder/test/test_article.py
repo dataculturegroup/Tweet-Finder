@@ -23,7 +23,13 @@ This utilizes a few webpages as static test cases:
 '''
 
 
-def _load_fixture(filename, return_article=True):
+def _load_fixture(filename: str, return_article:bool = True) -> Article:
+    """
+    Load a single story from a local HTML file and parse it into an Article
+    :param filename:
+    :param return_article:
+    :return:
+    """
     # If the article has a link to a twitter account that should not return as an embed
     with open(os.path.join(fixtures_dir, filename)) as f:
         article_html = f.read()
@@ -34,6 +40,9 @@ def _load_fixture(filename, return_article=True):
 
 
 class TestEmbeddedTweets(TestCase):
+    """
+    Test our parsing of embedded tweets, and compare to other libraries
+    """
 
     def testOneGooseMisses(self):
         # make sure we catch ones Goose misses (this article has one embedded)
@@ -67,6 +76,9 @@ class TestEmbeddedTweets(TestCase):
 
 
 class TestMentionedTweets(TestCase):
+    """
+    Test our parsing of mentioned of tweets or Twitter, and support for customizing
+    """
 
     def testMultipleMentionsAndNoEmbeds(self):
         article = _load_fixture("guardian.html")
@@ -92,6 +104,9 @@ class TestMentionedTweets(TestCase):
 
 
 class TestParsing(TestCase):
+    """
+    Test basic parsing and fetching of webpages
+    """
 
     def testBadIntialization(self):
         try:
@@ -112,6 +127,9 @@ class TestParsing(TestCase):
 
 
 class TestArticleViaSelenium(TestCase):
+    """
+    Test, and provide an example, of how to use Selenium to parse HTML rendered by a JS-heaving webpage. 
+    """
 
     def setUp(self):
         # setup a headless chrome we can re-use it in all the tests within this class
@@ -143,7 +161,4 @@ class TestArticleViaSelenium(TestCase):
                 article = Article(row['url'])
             calculated_tweet_count = article.count_embedded_tweets()
             true_tweet_count = row['tweet_count']
-            #if calculated_tweet_count != true_tweet_count:
-            #    logging.warning(row['url'])
             assert calculated_tweet_count == true_tweet_count
-

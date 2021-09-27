@@ -25,7 +25,6 @@ setup(name='tweetfinder',
           "readability-lxml>=0.8.1",
           "goose3>-3.1.9",
           "pycld2>=0.41",
-          "beautifulsoup4>=4.9.3"
       ],
       license='Apache',
       zip_safe=False
