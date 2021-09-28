@@ -1,7 +1,15 @@
 Tweet Finder
 ============
 
-A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets.
+A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets. We wrote this
+because we suspected our current research approaches were severely undercounting the number of Tweets embedded in news
+stories. Our intial evaluation confirms this:
+ * out of 1000 stories that mentioned twitter, our library found 640 embedded tweets
+ * Goose found 518 in the same set of stories (missing about 20%)
+ * if you add in support for processing Javascript-based embeds, we found 859 (35% more)
+These to-be-published results confirm our suspicion - most large quantitative news projects are undercounting 
+embedded Tweets by around 35%.
+
 
 Quickstart
 ----------
