@@ -1,14 +1,27 @@
 Tweet Finder
 ============
 
-A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets. We wrote this
-because we suspected our current research approaches were severely undercounting the number of Tweets embedded in news
-stories. Our intial evaluation confirms this:
- * out of 1000 stories that mentioned twitter, our library found 640 embedded tweets
- * Goose found 518 in the same set of stories (missing about 20%)
- * if you add in support for processing Javascript-based embeds, we found 859 (35% more)
-These to-be-published results confirm our suspicion - most large quantitative news projects are undercounting 
-embedded Tweets by around 35%.
+**A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets**. We wrote this
+because we suspected that current research approaches were significantly under-counting the number of Tweets embedded 
+in online news stories. Our initial evaluation confirms this.
+
+Why are embedded tweets being undercounted? Two main reasons:
+ 1. Not everyone embeds tweets following [the `blockquote` guidelines from Twitter](https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet) 
+ 2. Many new websites render their content via Javascript, not raw HTML so unless you run in a browser and execute the 
+    Javascript, you won't see the embedded tweets on the page source 
+Some of our initial numbers behind this:  
+ * Out of 1000 stories that mentioned twitter, our library found 640 embedded tweets in raw HTML
+ * [Goose3](https://goose3.readthedocs.io/en/latest/), which is what current papers seems to use, found 518 in the same
+   set of stories (ie. it missed about 20%)
+ * If you add in support for processing Javascript-based embeds, we found 859 (35% more) that traditional raw HTML-based
+   counting approaches miss 
+These to-be-published results confirm our suspicion - most large quantitative news projects are under-counting 
+embedded Tweets by around 35% or mre. This library is our attempt to help fix that.
+
+Why does that matter? Understanding how Twitter (and other platforms) is used in news media is critical for building
+a better map of how the media ecosystem functions. News shapes how we see the world; studying the architectures of 
+information flows around us is critical for preventing the spread of hate speech, misinformation, and supporting
+newsrooms and democracy. 
 
 
 Quickstart
