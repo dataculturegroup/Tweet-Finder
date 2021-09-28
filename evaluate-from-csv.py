@@ -1,7 +1,9 @@
 """
 This script reads news URLs from a CSV and runs our code against them for evaluation. It compares parsing raw HTML,
 HTML rendered by a headless browser so JS can run, and also runs Goose's extraction code. This produces a CSV we
-can use for comparing how well our code performs in a few ways. This can take 5-10 minutes to run.
+can use for comparing how well our code performs in a few ways. This can take a long time to run:
+* 35 mins for 500 stories (with a pool size of 8)
+* 1.2 hours for 1000 stories with a pool size of 16)
 """
 
 import pandas as pd
@@ -19,10 +21,11 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s | %(levelname)s | %(
 logger = logging.getLogger(__name__)
 
 IN_PARALLEL = True  # use this to control if we use parallel threads, or execute serially
-POOL_SIZE = 8
+POOL_SIZE = 16
 
 # must have a `stories_id` and `url` column in it (we source random_stories for testing from Media Cloud)
-STORY_CSV_FILE = "tweetfinder/test/fixtures/2021-random-stories.csv"
+#STORY_CSV_FILE = "tweetfinder/test/fixtures/2021-random-stories.csv"
+STORY_CSV_FILE = "tweetfinder/test/fixtures/2020-random-stories-mentioning-tweets.csv"
 
 stories_df = pd.read_csv(STORY_CSV_FILE)
 logger.info("Loaded {} random_stories from {}".format(len(stories_df.index), STORY_CSV_FILE))

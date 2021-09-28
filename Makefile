@@ -20,4 +20,3 @@ release:
 sphinx-docs:
 	sphinx-apidoc -o docs tweetfinder
 	sphinx-build -b html -c docs tweetfinder docs/html
-
