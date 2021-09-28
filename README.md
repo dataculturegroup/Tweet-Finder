@@ -9,6 +9,7 @@ Why are embedded tweets being undercounted? Two main reasons:
  1. Not everyone embeds tweets following [the `blockquote` guidelines from Twitter](https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet) 
  2. Many new websites render their content via Javascript, not raw HTML so unless you run in a browser and execute the 
     Javascript, you won't see the embedded tweets on the page source 
+
 Some of our initial numbers behind this:  
  * Out of 1000 stories that mentioned twitter, our library found 640 embedded tweets in raw HTML
  * [Goose3](https://goose3.readthedocs.io/en/latest/), which is what current papers seems to use, found 518 in the same
