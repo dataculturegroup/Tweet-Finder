@@ -5,7 +5,7 @@ tweetfinder: Find tweets embedded and mentioned in news articles online
 
 **Code**: https://github.com/dataculturegroup/Tweet-Finder
 
-**Documentation**: https://dataculturegroup.github.io/Tweet-Finder/
+**Documentation**: https://tweet-finder.readthedocs.io
 
 **A small Python library for finding Tweets embedded in online news
 articles, and mentions of Tweets**. We wrote this because we suspected
@@ -157,6 +157,7 @@ Distribution
 Version History
 ---------------
 
+-  **v0.2.0**: better documentation
 -  **v0.1.0**: initial release for testing
 
 Credits
