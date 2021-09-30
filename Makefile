@@ -19,9 +19,8 @@ release:
 
 sphinx-docs:
 	pandoc README.md --from markdown --to rst -s -o README.rst
-	pandoc README.md --from markdown --to rst -s -o docs-sphinx/source/README.rst
-	cat docs-sphinx/source/README.rst docs-sphinx/source/footer.rst > docs-sphinx/source/index.rst
-	rm docs-sphinx/source/README.rst
+	pandoc README.md --from markdown --to rst -s -o docs/source/README.rst
+	cat docs/source/README.rst docs/source/footer.rst > docs/source/index.rst
+	rm docs/source/README.rst
 	rm README.rst
-	sphinx-build -b html docs-sphinx/source/ docs-sphinx/build/html
-	cp -r docs-sphinx/build/html/* docs
+	sphinx-build -b html docs/source/ docs/build/html

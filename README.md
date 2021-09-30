@@ -5,7 +5,7 @@ tweetfinder: Find tweets embedded and mentioned in news articles online
 
 **Code**: https://github.com/dataculturegroup/Tweet-Finder
 
-**Documentation**: https://tweetfinder.readthedocs.io
+**Documentation**: https://dataculturegroup.github.io/Tweet-Finder/
 
 **A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets**. We wrote this
 because we suspected that current research approaches were significantly under-counting the number of Tweets embedded 
@@ -99,6 +99,21 @@ Return `True` or `False` depending on if there are any mentions of tweets in the
 Return the number of mentions of tweets in the article.
 
 ### my_article.list_mentioned_tweets()
+
+Return a `list` of `dicts` with information about the mention of a tweet. It will look like this:
+
+```python
+[{
+    'phrase': 'tweeted',
+    'context': 'in March last year. He decided to comfort himself by bingeing on a favourite TV show. “I randomly tweeted something about putting on the first episode of a TV series. I’m slightly afraid to say that it was',
+    'content_start_index': '670',
+}]
+```
+
+Properties: 
+  * `phrase`: the phrase matched as a mention of twitter 
+  * `context`: a window of characters around the phrease to help you understand where it occurred
+  * `content_start_index`: the index into `my_article.get_content()` you can use to find the match
 
 
 Development

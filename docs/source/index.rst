@@ -1,14 +1,11 @@
-tweetfinder: find embedded tweets and mentions of tweets in online news
+tweetfinder: Find tweets embedded and mentioned in news articles online
 =======================================================================
 
-.. figure:: https://img.shields.io/pypi/v/tweetfinder.svg
-   :alt: Python package on pypi
-
-   Python package on pypi
+**Package on pypi**: https://pypi.org/project/tweetfinder/
 
 **Code**: https://github.com/dataculturegroup/Tweet-Finder
 
-**Documentation**: https://tweetfinder.readthedocs.io
+**Documentation**: https://dataculturegroup.github.io/Tweet-Finder/
 
 **A small Python library for finding Tweets embedded in online news
 articles, and mentions of Tweets**. We wrote this because we suspected
@@ -37,24 +34,29 @@ Install with pip: ``pip install tweetfinder``.
 Motivation
 ----------
 
-Why are embedded tweets being undercounted? Two main reasons: 1. Not
-everyone embeds tweets following `the ``blockquote`` guidelines from
-Twitter <https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet>`__
-2. Many new websites render their content via Javascript, not raw HTML
-so unless you run in a browser and execute the Javascript, you won't see
-the embedded tweets on the page source
+Why are embedded tweets being undercounted? Two main reasons:
 
-| Some of our initial numbers behind this:
-| \* Out of 1000 stories that mentioned twitter, our library found 640
-  embedded tweets in raw HTML \*
-  `Goose3 <https://goose3.readthedocs.io/en/latest/>`__, which is what
-  current papers seems to use, found 518 in the same set of stories (ie.
-  it missed about 20%) \* If you add in support for processing
-  Javascript-based embeds, we found 859 (35% more) that traditional raw
-  HTML-based counting approaches miss These to-be-published results
-  confirm our suspicion - most large quantitative news projects are
-  under-counting embedded Tweets by around 35% or mre. This library is
-  our attempt to help fix that.
+1. Not everyone embeds tweets following `the ``blockquote`` guidelines
+   from
+   Twitter <https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet>`__
+2. Many new websites render their content via Javascript, not raw HTML
+   so unless you run in a browser and execute the Javascript, you won't
+   see the embedded tweets on the page source
+
+Some of our initial numbers behind this:
+
+-  Out of 1000 stories that mentioned twitter, our library found 640
+   embedded tweets in raw HTML
+-  `Goose3 <https://goose3.readthedocs.io/en/latest/>`__, which is what
+   current papers seems to use, found 518 in the same set of stories
+   (ie. it missed about 20%)
+-  If you add in support for processing Javascript-based embeds, we
+   found 859 (35% more) that traditional raw HTML-based counting
+   approaches miss
+
+These to-be-published results confirm our suspicion - most large
+quantitative news projects are under-counting embedded Tweets by around
+35% or mre. This library is our attempt to help fix that.
 
 Why does that matter? Understanding how Twitter (and other platforms) is
 used in news media is critical for building a better map of how the
@@ -118,6 +120,22 @@ Return the number of mentions of tweets in the article.
 my\_article.list\_mentioned\_tweets()
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Return a ``list`` of ``dicts`` with information about the mention of a
+tweet. It will look like this:
+
+.. code:: python
+
+    [{
+        'phrase': 'tweeted',
+        'context': 'in March last year. He decided to comfort himself by bingeing on a favourite TV show. “I randomly tweeted something about putting on the first episode of a TV series. I’m slightly afraid to say that it was',
+        'content_start_index': '670',
+    }]
+
+Properties: \* ``phrase``: the phrase matched as a mention of twitter \*
+``context``: a window of characters around the phrease to help you
+understand where it occurred \* ``content_start_index``: the index into
+``my_article.get_content()`` you can use to find the match
+
 Development
 -----------
 
@@ -131,9 +149,10 @@ Distribution
 2. Update the version number in ``tweetfinder/__init__.py``
 3. Make a brief note in the version history section below about the
    changes
-4. Run ``make build-release`` to create an install package
-5. Run ``make release-test`` to upload it to PyPI's test platform
-6. Run ``make release`` to upload it to PyPI
+4. Run ``make sphinx-docs`` to update the documentation
+5. Run ``make build-release`` to create an install package
+6. Run ``make release-test`` to upload it to PyPI's test platform
+7. Run ``make release`` to upload it to PyPI
 
 Version History
 ---------------
@@ -154,3 +173,20 @@ Maintainers:
 
 -  Rahul Bhargava
 -  Dina Zemlyanker
+
+
+Documentation Links
+===================
+
+.. toctree::
+   :maxdepth: 2
+
+   article
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
