@@ -26,6 +26,10 @@ setup(name='tweetfinder',
           "beautifulsoup4>=4.10.0",
           "pycld2>=0.41",
       ],
+      project_urls={
+          "Source": "https://github.com/dataculturegroup/Tweet-Finder",
+          "Docs": "https://tweet-finder.readthedocs.io/",
+      },
       license='Apache',
       zip_safe=False
 )
