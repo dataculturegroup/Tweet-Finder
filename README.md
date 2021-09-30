@@ -135,6 +135,7 @@ If you want to work on this module, clone the repo and install dependencies: `ma
 Version History
 ---------------
 
+* __v0.2.0__: better documentation
 * __v0.1.0__: initial release for testing
 
 
