@@ -6,4 +6,5 @@ pytest
 goose3
 selenium
 Sphinx
-m2r2
+pandoc
+webdriver-manager

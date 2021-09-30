@@ -5,6 +5,7 @@ from goose3 import Goose
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
+from webdriver_manager.chrome import ChromeDriverManager
 
 from tweetfinder import Article
 import pandas as pd
@@ -136,7 +137,9 @@ class TestArticleViaSelenium(TestCase):
         chrome_options = Options()
         chrome_options.add_argument('--mute-audio')
         chrome_options.add_argument('--headless')
-        self.driver = webdriver.Chrome('chromedriver', options=chrome_options)
+        # make sure we don't have verison incompatibilities
+        # see https://stackoverflow.com/questions/60296873/sessionnotcreatedexception-message-session-not-created-this-version-of-chrome/62127806
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     def _loadViaSelenium(self, url: str, delay_secs: int = 1):
         self.driver.get(url)
