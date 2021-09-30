@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>tweetfinder: find embedded tweets and mentions of tweets in online news &#8212; tweetfinder 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="tweetfinder-find-embedded-tweets-and-mentions-of-tweets-in-online-news">
+<h1>tweetfinder: find embedded tweets and mentions of tweets in online news<a class="headerlink" href="#tweetfinder-find-embedded-tweets-and-mentions-of-tweets-in-online-news" title="Permalink to this headline">¶</a></h1>
+<figure class="align-default" id="id1">
+<img alt="Python package on pypi" src="https://img.shields.io/pypi/v/tweetfinder.svg" /><figcaption>
+<p><span class="caption-text">Python package on pypi</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<p><strong>Code</strong>: <a class="reference external" href="https://github.com/dataculturegroup/Tweet-Finder">https://github.com/dataculturegroup/Tweet-Finder</a></p>
+<p><strong>Documentation</strong>: <a class="reference external" href="https://tweetfinder.readthedocs.io">https://tweetfinder.readthedocs.io</a></p>
+<p><strong>A small Python library for finding Tweets embedded in online news
+articles, and mentions of Tweets</strong>. We wrote this because we suspected
+that current research approaches were significantly under-counting the
+number of Tweets embedded in online news stories. Our initial evaluation
+confirms this.</p>
+<section id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p>Install with pip: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">tweetfinder</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tweetfinder</span> <span class="kn">import</span> <span class="n">Article</span>
+<span class="n">my_article</span> <span class="o">=</span> <span class="n">Article</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://my.news/article&quot;</span><span class="p">)</span>  <span class="c1"># this will load and parse the article</span>
+
+<span class="c1"># you can list discover all the tweets that are embedded in the HTML</span>
+<span class="n">num_embedded</span> <span class="o">=</span> <span class="n">my_article</span><span class="o">.</span><span class="n">count_embedded_tweets</span><span class="p">()</span>
+<span class="n">tweets_embedded</span> <span class="o">=</span> <span class="n">my_article</span><span class="o">.</span><span class="n">list_embedded_tweets</span><span class="p">()</span> <span class="c1"># metadata about tweets that are embedded</span>
+
+<span class="c1"># you can also discover any mentions of twitter (in English), like &quot;tweeted that&quot; or &quot;in a retweet&quot;</span>
+<span class="n">num_mentions</span> <span class="o">=</span> <span class="n">my_article</span><span class="o">.</span><span class="n">count_mentioned_tweets</span><span class="p">()</span>
+<span class="n">tweet_mentions</span> <span class="o">=</span> <span class="n">my_article</span><span class="o">.</span><span class="n">list_mentioned_tweets</span><span class="p">()</span>  <span class="c1"># list of text snippets that mention a tweet</span>
+</pre></div>
+</div>
+</section>
+<section id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>Why are embedded tweets being undercounted? Two main reasons: 1. Not
+everyone embeds tweets following <cite>the ``blockquote`</cite> guidelines from
+Twitter &lt;<a class="reference external" href="https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet">https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet</a>&gt;`__
+2. Many new websites render their content via Javascript, not raw HTML
+so unless you run in a browser and execute the Javascript, you won’t see
+the embedded tweets on the page source</p>
+<div class="line-block">
+<div class="line">Some of our initial numbers behind this:</div>
+<div class="line">* Out of 1000 stories that mentioned twitter, our library found 640
+embedded tweets in raw HTML *
+<a class="reference external" href="https://goose3.readthedocs.io/en/latest/">Goose3</a>, which is what
+current papers seems to use, found 518 in the same set of stories (ie.
+it missed about 20%) * If you add in support for processing
+Javascript-based embeds, we found 859 (35% more) that traditional raw
+HTML-based counting approaches miss These to-be-published results
+confirm our suspicion - most large quantitative news projects are
+under-counting embedded Tweets by around 35% or mre. This library is
+our attempt to help fix that.</div>
+</div>
+<p>Why does that matter? Understanding how Twitter (and other platforms) is
+used in news media is critical for building a better map of how the
+media ecosystem functions. News shapes how we see the world; studying
+the architectures of information flows around us is critical for
+preventing the spread of hate speech, misinformation, and supporting
+newsrooms and democracy.</p>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>When you create an Article the HTML is downloaded (if needed) and parsed
+immediately to find any mentions of twitter and any embedded tweets.
+There a number of methods to return the information found:</p>
+<section id="my-article-embeds-tweets">
+<h3>my_article.embeds_tweets()<a class="headerlink" href="#my-article-embeds-tweets" title="Permalink to this headline">¶</a></h3>
+<p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> depending on if there are any tweets
+embedded in the article.</p>
+</section>
+<section id="my-article-count-embedded-tweets">
+<h3>my_article.count_embedded_tweets()<a class="headerlink" href="#my-article-count-embedded-tweets" title="Permalink to this headline">¶</a></h3>
+<p>Return the number of tweets embedded in the article.</p>
+</section>
+<section id="my-article-list-embedded-tweets">
+<h3>my_article.list_embedded_tweets()<a class="headerlink" href="#my-article-list-embedded-tweets" title="Permalink to this headline">¶</a></h3>
+<p>Return a <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">dicts</span></code> with information about the tweets found.
+The properties in this <code class="docutils literal notranslate"><span class="pre">dict</span></code> depend on how we found the tweet. It
+could look like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[{</span>
+    <span class="s1">&#39;tweet_id&#39;</span><span class="p">:</span> <span class="s1">&#39;//twitter.com/sliccard&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;html_source&#39;</span><span class="p">:</span> <span class="s1">&#39;blockquote url fallback&#39;</span>
+    <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;full_url&#39;</span><span class="p">:</span> <span class="s1">&#39;https://twitter.com/sliccardo&#39;</span><span class="p">,</span>
+<span class="p">}]</span>
+</pre></div>
+</div>
+<p>Properties: * <code class="docutils literal notranslate"><span class="pre">tweet_id</span></code>: the unique id of the tweet, can be used in
+concert with Twitter’s API to pull more metadata (always included) *
+<code class="docutils literal notranslate"><span class="pre">html_source</span></code>: a string indicating which method the tweet was found
+with (always included) * <code class="docutils literal notranslate"><span class="pre">full_url</span></code>: the complete URL to the tweet on
+Twitter (sometimes included) * <code class="docutils literal notranslate"><span class="pre">username</span></code>: the twitter username of
+the author of the tweet, including the “&#64;” (sometimes included)</p>
+</section>
+<section id="my-article-mentions-tweets">
+<h3>my_article.mentions_tweets()<a class="headerlink" href="#my-article-mentions-tweets" title="Permalink to this headline">¶</a></h3>
+<p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> or <code class="docutils literal notranslate"><span class="pre">False</span></code> depending on if there are any mentions of
+tweets in the article.</p>
+</section>
+<section id="my-article-count-mentioned-tweets">
+<h3>my_article.count_mentioned_tweets()<a class="headerlink" href="#my-article-count-mentioned-tweets" title="Permalink to this headline">¶</a></h3>
+<p>Return the number of mentions of tweets in the article.</p>
+</section>
+<section id="my-article-list-mentioned-tweets">
+<h3>my_article.list_mentioned_tweets()<a class="headerlink" href="#my-article-list-mentioned-tweets" title="Permalink to this headline">¶</a></h3>
+</section>
+</section>
+<section id="development">
+<h2>Development<a class="headerlink" href="#development" title="Permalink to this headline">¶</a></h2>
+<p>If you want to work on this module, clone the repo and install
+dependencies: <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">requirements-dev</span></code>.</p>
+</section>
+<section id="distribution">
+<h2>Distribution<a class="headerlink" href="#distribution" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code> to make sure all the test pass</p></li>
+<li><p>Update the version number in <code class="docutils literal notranslate"><span class="pre">tweetfinder/__init__.py</span></code></p></li>
+<li><p>Make a brief note in the version history section below about the
+changes</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build-release</span></code> to create an install package</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">release-test</span></code> to upload it to PyPI’s test platform</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">release</span></code> to upload it to PyPI</p></li>
+</ol>
+</section>
+<section id="version-history">
+<h2>Version History<a class="headerlink" href="#version-history" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><strong>v0.1.0</strong>: initial release for testing</p></li>
+</ul>
+</section>
+<section id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this headline">¶</a></h2>
+<p>This library is part of the <a class="reference external" href="https://mediacloud.org">Media Cloud</a>
+project, and is supported by the <a class="reference external" href="https://camd.northeastern.edu/research-scholarship-creative-practice/co-laboratory-for-data-impact/">Co-Lab for Data
+Impact</a>
+and the <a class="reference external" href="https://dataculturegroup.org">Data Culture Group</a> at
+Northeastern University.</p>
+<section id="maintainers">
+<h3>Maintainers:<a class="headerlink" href="#maintainers" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Rahul Bhargava</p></li>
+<li><p>Dina Zemlyanker</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">tweetfinder</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="article.html">Processing an Article</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Rahul Bhargava, Dina Zemlyanker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/README.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

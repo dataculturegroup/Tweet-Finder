@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Processing an Article &#8212; tweetfinder 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="tweetfinder: Find tweets embedded and mentioned in news articles online" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="processing-an-article">
+<h1>Processing an Article<a class="headerlink" href="#processing-an-article" title="Permalink to this headline">¶</a></h1>
+<p>The main work happens in the <cite>Article</cite> class. This is how you load and parse an online news article at a URL. You
+can pass in a URL or HTML to work with.</p>
+<section id="the-tweetfinder-article-article-class">
+<h2>The tweetfinder.article.Article class<a class="headerlink" href="#the-tweetfinder-article-article-class" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="tweetfinder.article.Article">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">tweetfinder.article.</span></span><span class="sig-name descname"><span class="pre">Article</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">html</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mentions_list</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/tweetfinder/article.html#Article"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is how you parse an article for embeds and mentions of Tweets. Pass in a <cite>url</cite> or <cite>html</cite> to the constructor.
+Then call any of the <cite>get_</cite> methods to see what the code found.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.count_embedded_tweets">
+<span class="sig-name descname"><span class="pre">count_embedded_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.count_embedded_tweets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.count_embedded_tweets" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many tweets are embedded on this webpage?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.count_mentioned_tweets">
+<span class="sig-name descname"><span class="pre">count_mentioned_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.count_mentioned_tweets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.count_mentioned_tweets" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many times are tweets mentioned on this webpage?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.embeds_tweets">
+<span class="sig-name descname"><span class="pre">embeds_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.embeds_tweets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.embeds_tweets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does this webpage have any embedded tweets?</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.get_content">
+<span class="sig-name descname"><span class="pre">get_content</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.get_content"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.get_content" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the part of the webpage that we considered as content, via the readability library.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.get_html">
+<span class="sig-name descname"><span class="pre">get_html</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.get_html"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.get_html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HTML fetched if you passed in a url, or the same HTML you passed in if not.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.list_embedded_tweets">
+<span class="sig-name descname"><span class="pre">list_embedded_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.list_embedded_tweets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.list_embedded_tweets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detailed information about the tweets embedded on the webpage.
+:return: The exact info depends on how the tweets were embeded. If they were embedded the official way, then
+we can return a link to the tweet, the tweet id, and the author’s username. But there are some other ways
+tweets are embededed via Javascript that only let us parse out the tweet id easily. So you can check the
+<cite>html_source</cite> property of each returned one to identify how we found it and then look for other data based on
+that. You will at least get the tweet id no matter which method we found it with.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.list_mentioned_tweets">
+<span class="sig-name descname"><span class="pre">list_mentioned_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.list_mentioned_tweets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.list_mentioned_tweets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Detailed information about each mention of a tweet we found=.
+:return: None if this isn’t a supported language, otherwise a List. Each item includes the <cite>phrase</cite> found,
+some <cite>context</cite> via a window of text around it, and <cite>content_start_index</cite> to help you find it yourself in
+the <cite>get_content</cite> string.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="tweetfinder.article.Article.mentions_tweets">
+<span class="sig-name descname"><span class="pre">mentions_tweets</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/tweetfinder/article.html#Article.mentions_tweets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#tweetfinder.article.Article.mentions_tweets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does this webpage mention any tweets?</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">tweetfinder</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Processing an Article</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-tweetfinder-article-article-class">The tweetfinder.article.Article class</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">tweetfinder: Find tweets embedded and mentioned in news articles online</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Rahul Bhargava, Dina Zemlyanker.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/article.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
