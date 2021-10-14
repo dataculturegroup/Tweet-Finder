@@ -25,7 +25,8 @@ POOL_SIZE = 16
 
 # must have a `stories_id` and `url` column in it (we source random_stories for testing from Media Cloud)
 #STORY_CSV_FILE = "tweetfinder/test/fixtures/2021-random-stories.csv"
-STORY_CSV_FILE = "tweetfinder/test/fixtures/2020-random-stories-mentioning-tweets.csv"
+#STORY_CSV_FILE = "tweetfinder/test/fixtures/2020-random-relevant-stories.csv"
+STORY_CSV_FILE = "tweetfinder/test/fixtures/tweet_embeds_data.csv"
 
 stories_df = pd.read_csv(STORY_CSV_FILE)
 logger.info("Loaded {} random_stories from {}".format(len(stories_df.index), STORY_CSV_FILE))
@@ -70,17 +71,16 @@ def story_worker(story: Dict) -> Dict:
     :return: a dict of the info we care about
     """
     try:
-        logger.info("  story {}".format(story['stories_id']))
+        if 'stories_id' in story:
+            logger.info("  story {}".format(story['stories_id']))
         data = {}
         url = story['url']
         data['url'] = url
-        data['stories_id'] = story['stories_id']
+        data['stories_id'] = story['stories_id'] if 'stories_id' in story else ''
         # tweet finder with raw html
         article = Article(url=url, timeout=5)
         data['tweet_finder_embeds'] = article.count_embedded_tweets()
         data['tweet_finder_mentions'] = article.count_mentioned_tweets()
-        # goose with raw html
-        data['goose_embeds'] = count_tweets_goose(article.get_html())
         # tweet finder with JS-rendered html
         driver = get_driver()  # grab the chrome instance for the thread we are in
         driver.get(url)
@@ -89,6 +89,10 @@ def story_worker(story: Dict) -> Dict:
         article_js = Article(html=rendered_html)
         data['tweet_finder_js_embeds'] = article_js.count_embedded_tweets()
         data['tweet_finder_js_mentions'] = article_js.count_mentioned_tweets()
+        # goose with raw html
+        data['goose_embeds'] = count_tweets_goose(article.get_html())
+        # goose with JS-rendered html
+        data['goose_js_embeds'] = count_tweets_goose(rendered_html)
         # and keep track of the results
         return data
     except Exception:
