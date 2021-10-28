@@ -78,7 +78,7 @@ class Article:
         self._html_soup = BeautifulSoup(self._html, "lxml")
         # remove HTML tags so we can search text-only content for mentions later
         doc = readability.Document(self._html)
-        self._content = doc.summary()
+        self._content = doc.summary().lower()
         self._content_soup = BeautifulSoup(self._content, "lxml")
         self._content_no_tags = self._content_soup.get_text().strip()
         # lets parse it all here so we don't have to do it more than once
@@ -202,6 +202,7 @@ class Article:
         mentions_dict_list = []
         article_text = self._content_no_tags
         for twitter_phrase in self._mentions_list:
+            twitter_phrase = twitter_phrase.strip().lower()
             start_index = 0
             phrase_index = 0
             while phrase_index != -1:
