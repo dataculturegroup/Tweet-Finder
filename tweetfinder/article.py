@@ -21,7 +21,7 @@ MENTIONS_CONTEXT_WINDOW_SIZE = 100
 DEFAULT_TIMEOUT = 5
 
 # modified from https://stackoverflow.com/questions/4138483/twitter-status-url-regex
-tweet_status_url_pattern = re.compile('^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+).*', re.IGNORECASE)
+tweet_status_url_pattern = re.compile(r'^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+).*', re.IGNORECASE)
 
 
 class UnsupportedLanguageException(BaseException):
@@ -53,7 +53,8 @@ class Article:
         if (url is None) and (html is None):
             raise ValueError('You must pass in either a url or html argument')
         self._url = url
-        self._mentions_list = mentions_list or mentions.ALL
+        # make the list of mentions unique here as a safeguard, and also sort it for reproduceable results
+        self._mentions_list = sorted(set([term.strip().lower() for term in (mentions_list or mentions.ALL)]))
         self._download_timeout = timeout or DEFAULT_TIMEOUT
         if html is None:
             self._html = self._download_article()
@@ -202,7 +203,6 @@ class Article:
         mentions_dict_list = []
         article_text = self._content_no_tags
         for twitter_phrase in self._mentions_list:
-            twitter_phrase = twitter_phrase.strip().lower()
             start_index = 0
             phrase_index = 0
             while phrase_index != -1:

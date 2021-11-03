@@ -88,10 +88,11 @@ class TestMentionedTweets(TestCase):
         mentions = article.list_mentioned_tweets()
         assert len(mentions) == article.count_mentioned_tweets()
         assert len(mentions) == 2
+        print("!!!!"+mentions[0]['phrase'])
+        assert mentions[0]['phrase'] == "from a tweet"
+        assert "virtually with friends I made from a tweet".lower() in mentions[0]['context']
         assert mentions[1]['phrase'] == "tweeted"
         assert "randomly tweeted something" in mentions[1]['context']
-        assert mentions[0]['phrase'] == "from a tweet"
-        assert "virtually with friends I made from a tweet" in mentions[0]['context']
 
     def testMentionInLinkNotText(self):
         # this article has a mention in a link - "tweets" - not in text so that shouldn't count
@@ -119,7 +120,8 @@ class TestParsing(TestCase):
     def testGetContent(self):
         article = _load_fixture("npr.html")
         content = article.get_content()
-        assert content.startswith('<html><body><div><div id="storytext" class="storytext storylocation linkLocation">')
+        assert content.startswith('<html><body><div>')
+        assert 'storytext' in content[:100]
 
     def testGetHtml(self):
         article = _load_fixture("npr.html")
@@ -155,8 +157,12 @@ class TestArticleViaSelenium(TestCase):
         article = self._loadViaSelenium(url)
         assert article.count_embedded_tweets() == 3
 
+    '''
+    # This tests against our manually coded set of articles. However, since it loads those live this isn't a great
+    # unit test - the media compaines change their code and probably the URLs will 404 soon. So I'm removing this
+    # unit test but leaving the code here as an example for how to run against a set of articles.  
     def testHandCodedList(self):
-        tweet_embed_data = pd.read_csv(os.path.join(fixtures_dir, 'tweet_embeds_data.csv'))
+        tweet_embed_data = pd.read_csv(os.path.join(fixtures_dir, '2021-manual-stories.csv'))
         for _, row in tweet_embed_data.iterrows():
             if row['embedded_via_js'] == 1:
                 article = self._loadViaSelenium(row['url'])
@@ -165,3 +171,4 @@ class TestArticleViaSelenium(TestCase):
             calculated_tweet_count = article.count_embedded_tweets()
             true_tweet_count = row['tweet_count']
             assert calculated_tweet_count == true_tweet_count
+    '''
