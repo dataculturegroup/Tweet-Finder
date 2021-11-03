@@ -1,12 +1,10 @@
 import time
-
 from goose3 import Goose
-from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import WebDriverException
 from selenium import webdriver
-# from webdriver_manager.chrome import ChromeDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
-
 
 from tweetfinder import Article
 
@@ -56,43 +54,54 @@ answer_dict = {'https://www.techradar.com/news/lord-of-the-rings-on-amazon' : ['
                ['1387966124797661188']}
 
 
-
-
 def getDriver():
     # setup a headless chrome we can re-use it in all the tests within this class
     chrome_options = Options()
     chrome_options.add_argument('--mute-audio')
     chrome_options.add_argument('--headless')
-    driver = webdriver.Chrome('chromedriver.exe', options=chrome_options)
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    try:
+        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+    except WebDriverException as wde:
+        driver = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     return driver
+
 
 def _loadViaSelenium(driver, url: str, delay_secs: int = 1):
     driver.get(url)
-    # let it render the javscript, then grab the *rendered* html, not the source_html
+    # let it render the javascript, then grab the *rendered* html, not the source_html
     time.sleep(delay_secs)  # hopefully it renders after this much time
     rendered_html = driver.find_element_by_tag_name('html').get_attribute('innerHTML')
     # now that we have HTML rendered by Javascript, we can check for tweets
     return Article(html=rendered_html)
 
+
 def count_tweets_goose(url):
     g = Goose()
     article = g.extract(url=url)
     return article.tweets
+
+
 def count_tweets_goose_js(html):
     g = Goose()
     article = g.extract(raw_html=html)
     return article.tweets
 
-#True Positive: tweet id in manual set and also in set from tweetfinder
-#False Positive: tweet id not manual set but is in set from tweetfinder
-#False Negative: tweet id in manual set and not in set from tweetfinder
 
 def get_stats_for_all():
-    count_dict = {'tweetfinder': {'tp': 0, 'fp':0}, 'tweetfinder_js': {'tp': 0, 'fp':0},
-                         'goose': {'tp': 0, 'fp':0}, 'goose_js': {'tp': 0, 'fp':0}}
+    """
+    Pull the total cumulative scores. Notes:
+    * True Positive: tweet id in manual set and also in set from tweetfinder
+    * False Positive: tweet id not manual set but is in set from tweetfinder
+    * False Negative: tweet id in manual set and not in set from tweetfinder
+    :return:
+    """
+    count_dict = {'tweetfinder': {'tp': 0, 'fp': 0},
+                  'tweetfinder_js': {'tp': 0, 'fp': 0},
+                  'goose': {'tp': 0, 'fp': 0},
+                  'goose_js': {'tp': 0, 'fp': 0}
+                  }
+    driver = getDriver()
     for url, tweet_id_list in answer_dict.items():
-        driver = getDriver()
         article_js = _loadViaSelenium(driver, url)
         article = Article(url=url)
         found_tweets_tweetfinder = article.list_embedded_tweets()
@@ -131,10 +140,11 @@ def get_stats_for_all():
         except ZeroDivisionError:
             precision = 0
             recall = 0
-        stats_dict_dict[key] = {'precision': precision,'recall': recall}
+        stats_dict_dict[key] = {'precision': precision, 'recall': recall}
         stats_dict[key] = [stats_dict_dict[key]['precision'], stats_dict_dict[key]['recall']]
     eval_df = pd.DataFrame(stats_dict)
     eval_df.to_csv('embeds_tweet_review.csv', index=False)
+
 
 if __name__ == "__main__":
     get_stats_for_all()
