@@ -79,23 +79,26 @@ def count_tweets_goose(url):
     g = Goose()
     article = g.extract(url=url)
     return article.tweets
+def count_tweets_goose_js(html):
+    g = Goose()
+    article = g.extract(raw_html=html)
+    return article.tweets
 
 #True Positive: tweet id in manual set and also in set from tweetfinder
 #False Positive: tweet id not manual set but is in set from tweetfinder
 #False Negative: tweet id in manual set and not in set from tweetfinder
 
 def get_stats_for_all():
-    count_dict = {'tweetfinder': {'tp': 0, 'fn':0, 'fp':0}, 'tweetfinder_js': {'tp': 0, 'fn':0, 'fp':0},
-                         'goose': {'tp': 0, 'fn':0, 'fp':0}, 'goose_js': {'tp': 0, 'fn':0, 'fp':0}}
+    count_dict = {'tweetfinder': {'tp': 0, 'fp':0}, 'tweetfinder_js': {'tp': 0, 'fp':0},
+                         'goose': {'tp': 0, 'fp':0}, 'goose_js': {'tp': 0, 'fp':0}}
     for url, tweet_id_list in answer_dict.items():
-        # driver = getDriver()
-        # article_js = _loadViaSelenium(driver, url)
+        driver = getDriver()
+        article_js = _loadViaSelenium(driver, url)
         article = Article(url=url)
         found_tweets_tweetfinder = article.list_embedded_tweets()
         found_tweets_goose = count_tweets_goose(url)
-        # found_tweets_tweetfinder_js = article_js.list_embedded_tweets()
-        found_tweets_tweetfinder_js = []
-        found_tweets_goose_js = []
+        found_tweets_tweetfinder_js = article_js.list_embedded_tweets()
+        found_tweets_goose_js = count_tweets_goose_js(article_js.get_html())
         found_id_dict = {'tweetfinder': found_tweets_tweetfinder, 'tweetfinder_js': found_tweets_tweetfinder_js,
                          'goose': found_tweets_goose, 'goose_js': found_tweets_goose_js}
         for key, found_tweets in found_id_dict.items():
@@ -106,19 +109,10 @@ def get_stats_for_all():
                 for tweet in found_tweets:
                     found_id_list.append(tweet['tweet_id'])
                 found_tweets = found_id_list
-            for tw_id in tweet_id_list:
-                if tw_id not in found_tweets:
-                    key_count_dict['fn'] += 1
             for tweet_id in found_tweets:
                 if key == 'goose':
-                    href_start = tweet_id.find('href')
-                    question_start = tweet_id.find('?', href_start)
-                    if question_start > 0:
-                        tweet_id = tweet_id[question_start - 19: question_start]
-                    else:
-                        id_end = tweet_id.find('"', href_start + 10)
-                        tweet_id = tweet_id[id_end - 19: id_end]
-                    print(tweet_id)
+                    id_start = tweet_id.find('status/')
+                    tweet_id = tweet_id[id_start + 7 :id_start + 26]
                 if tweet_id in tweet_id_list:
                     key_count_dict['tp'] += 1
                 else:
@@ -126,7 +120,6 @@ def get_stats_for_all():
     total_count = 36
     stats_dict = {}
     stats_dict_dict = {}
-    print(count_dict)
     for key in count_dict.keys():
         try:
             count_dict_key = count_dict[key]
@@ -145,3 +138,6 @@ def get_stats_for_all():
 
 if __name__ == "__main__":
     get_stats_for_all()
+
+
+
