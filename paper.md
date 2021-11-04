@@ -19,7 +19,7 @@ bibliography: paper.bib
 
 # Summary
 
-The use of embedded content from Twitter, YouTube, TikTok, and other platforms has grown to become a norm in online news content. When these platforms emerged journalists employed existing industry norms to treat them like traditional sources [@hermida_tweets_2012, @vis_twitter_2013]. Twitter in particular has become a major platform used by journalists and politicians alike. This has led to a pivot in research work to instead address Twitter as a platform of authority, where news needing coverage is being made [@molyneux_when_2021]. Research to understand the evolution and current practice of using tweets in online news relies on large scale automated analysis to discover embedded tweets, and mentions of tweets, in articles. Finding embedded tweets, and mentions of tweets, can be considered a specialized content extraction task [@gruppi_tweeting_2021].
+The use of embedded content from Twitter, YouTube, TikTok, and other platforms has grown to become a norm in online news content. When these platforms emerged journalists employed existing industry norms to treat them like traditional sources [@hermida_tweets_2012] [@vis_twitter_2013]. Twitter in particular has become a major platform used by journalists and politicians alike. This has led to a pivot in research work to instead address Twitter as a platform of authority, where news needing coverage is being made [@molyneux_when_2021]. Research to understand the evolution and current practice of using tweets in online news relies on large scale automated analysis to discover embedded tweets, and mentions of tweets, in articles. Finding embedded tweets, and mentions of tweets, can be considered a specialized content extraction task [@gruppi_tweeting_2021].
 
 # Statement of Need
 
@@ -85,9 +85,9 @@ This feature does not lend itself to evaluation in the same manner as finding em
 
  | Corpus | Total mentions | Basic | Rony 2018 | Molyneux 2020 |
  | --- | --- | --- | --- | --- |
- | 2021 Manual | 61 | 53 | 1 |
- | 2021 Random | 37 | 35 | 1 |
- | 2020 Relevant | 936 | 768 | 44 |
+ | 2021 Manual | 61 | 53 | 60 | 1 |
+ | 2021 Random | 37 | 35 | 37 | 1 |
+ | 2020 Relevant | 936 | 768 | 935 | 44 |
 
 Table 3 shows that the very short “Basic” list finds a significant portion of the mentions that are included in the far longer Rony 2018 list. This suggests that the majority of journalists use only a small set of phrases when mentioning twitter content in articles.
 
