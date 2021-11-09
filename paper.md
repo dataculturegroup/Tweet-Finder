@@ -27,11 +27,11 @@ The use of embedded content from Twitter, YouTube, TikTok, and other platforms h
 
 # Functionality
 
-Users can provide `tweetfinder` with a URL or raw HTML text as input, and it provides convenience methods to return lists of those two types of references to Tweets it finds. HTML is fetched via `requests`[@noauthor_requests_2021], content is extracted via `readability-lxml`[@baburov_python-readability_2021], and further manipulated via `BeautifulSoup` [@noauthor_beautiful_nodate].
+Users can provide `tweetfinder` with a URL or raw HTML text as input, and it provides convenience methods to return lists of those two types of references to Tweets it finds. HTML is fetched via `requests`[@requests], content is extracted via `readability-lxml`[@python-readability], and further manipulated via `BeautifulSoup` [@beautifulsoup].
 
 ## Finding Embedded Tweets
 
-Twitter’s documentation offers a “supported” approach to embedding tweets in web content - namely inserting it via a `<blockquote class=”twitter-tweet”>` tag [@noauthor_how_nodate]. We found that not all websites follow these guidelines, and hypothesized that prior work relying on this method of counting could be undercounting. In addition, evolving norms of web-app development have led to some news sites taking an approach of rendering their HTML content via client-side Javascript, leading to non-standard embedding.
+Twitter’s documentation offers a “supported” approach to embedding tweets in web content - namely inserting it via a `<blockquote class=”twitter-tweet”>` tag [@twitter_help]. We found that not all websites follow these guidelines, and hypothesized that prior work relying on this method of counting could be undercounting. In addition, evolving norms of web-app development have led to some news sites taking an approach of rendering their HTML content via client-side Javascript, leading to non-standard embedding.
 
 `tweetfinder` includes a list of possible formats for embedding:
  * `blockquote` elements classed of “twitter-tweet” (the officially supported approach)
@@ -39,11 +39,11 @@ Twitter’s documentation offers a “supported” approach to embedding tweets 
  * `div` elements classed “embed-twitter”
  * `div` elements classed “twitter-tweet-rendered” with a child `iframe`
 
-We also provide examples of how to pre-process a URL through a browser so any Javascript is able to run fully (via `selenium` [@noauthor_selenium_nodate]). While computationally expensive, this approach does ensure more complete results.
+We also provide examples of how to pre-process a URL through a browser so any Javascript is able to run fully (via `selenium` [@selenium]). While computationally expensive, this approach does ensure more complete results.
 
 ## Finding Mentions of Twitter
 
-A second key functionality for researchers is to find mentions of tweets in news. Existing work takes the approach of building libraries of phrases and keywords and checking content against them [@rony_large-scale_2018, @molyneux_when_2021]. `tweetfinder` integrates prior keyword lists and expands them to allow users to locate these types of mentions of twitter content in news online. A clear limitation is that this approach currently only works for English language content; `tweetfinder` uses `cld2`[@alrfou_pycld2_2021] to detect the content language and raises an error if the user attempts to list mentions on non-English language articles.
+A second key functionality for researchers is to find mentions of tweets in news. Existing work takes the approach of building libraries of phrases and keywords and checking content against them [@rony_large-scale_2018, @molyneux_when_2021]. `tweetfinder` integrates prior keyword lists and expands them to allow users to locate these types of mentions of twitter content in news online. A clear limitation is that this approach currently only works for English language content; `tweetfinder` uses `cld2`[@pycld2] to detect the content language and raises an error if the user attempts to list mentions on non-English language articles.
 
 # Results
 
@@ -56,7 +56,7 @@ Each of those corpora were created from the Media Cloud database of news stories
 
 ## Embedded Tweets
 
-In our literature review we found the standard library for extracting embedded tweets was `Goose`; it was either cited directly in each paper referenced here, or we contacted the authors and they indicated that they used it. With the 2021 manual corpus we can do a detailed evaluation of precision and recall.
+In our literature review we found the most commenly used library for extracting embedded tweets was `Goose` [@goose3]; it was either cited directly in each paper referenced here, or we contacted the authors and they indicated that they used it. In order to evaluate performance we compared the tweets found by `tweetfinder` to `Goose` in our manually coded corpus. This allows us to look at precision and recall for each library.
 
 | Library | Tweets Found | Precision | Recall |
 | --- | --- | --- | --- |
@@ -65,7 +65,7 @@ In our literature review we found the standard library for extracting embedded t
 | tweetfinder (with Javascript) | 37 | 0.946 | 0.972 |
 | Goose | 22 | 0.956 | 0.611 |
 
-Unsurprisingly precision is high for all three automated approaches (Table 1). Recall varies far more. This small corpus shows processing the Javascript is critical for finding a higher percentage of the total embedded tweets. In this analysis we omits a “Goose (with Javascript)” option because executing the Javascript replaces the `blockquote` element with an `iframe` element, leaving Goose unable to detect embedded tweets at all.
+Unsurprisingly, precision is high for all three automated approaches (Table 1). Recall varies far more. This small corpus shows processing the Javascript is critical for finding a higher percentage of the total embedded tweets. In this analysis we omit a “Goose (with Javascript)” option because executing the Javascript replaces the `blockquote` element with an `iframe` element, leaving Goose unable to detect embedded tweets at all.
 
 | Library | 2021 manual | 2021 random | 2020 relevant |
 | --- | --- | --- | --- |
@@ -73,11 +73,11 @@ Unsurprisingly precision is high for all three automated approaches (Table 1). R
 | tweetfinder (with Javascript) | 37 | 28 | 844 |
 | Goose | 22 | 22 | 469 |
 
-At a higher level, In each of these corpora we see `tweetfinder` outperforming `Goose` (Table 2). It is particularly worth highlighting the 2020 relevant results, which were selected to more likely include such content. On this corpus of stories, `tweetfinder` finds more finds 28% more embedded tweets than `Goose`, and `tweetfinder` (with Javascript) finds 80% more.
+At a higher level, in each of these corpora we see `tweetfinder` outperforming `Goose` (Table 2). It is particularly worth highlighting the 2020 relevant results, which were selected to more likely include such content. On this corpus of stories, `tweetfinder` finds more finds 28% more embedded tweets than `Goose`, and `tweetfinder` (with Javascript) finds 80% more.
 
 ## Mentions of Tweets
 
-This feature does not lend itself to evaluation in the same manner as finding embedded tweets, because the software is simply finding predetermined strings in text. In lieu of that, we characterize the quantity of mentions found in each corpus against each set of included phrases. We include three separate lists of phrases:
+This feature does not lend itself to evaluation in the same manner as finding embedded tweets, because the software is simply finding predetermined strings in text. Instead, we characterize the quantity of mentions found in each corpus against each set of included phrases. We include three separate lists of phrases:
  * Basic: A short list of basic phrases associated with Twitter generated by the authors of this paper (examples: “tweeted”, “in a tweet”)
  * Rony 2018: A list shared by the authors in their paper [@rony_large-scale_2018] (examples: “posted on Twitter”, “tweet sent”, “wrong on twitter”)
  * Molyneux 2020: A short list shared by authors in their paper [@molyneux_when_2021] (examples: “retweet”, “according to a tweet”)
