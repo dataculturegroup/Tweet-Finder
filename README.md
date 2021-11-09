@@ -8,7 +8,7 @@ tweetfinder: Find tweets embedded and mentioned in news articles online
 **Documentation**: https://tweet-finder.readthedocs.io
 
 **A small Python library for finding Tweets embedded in online news articles, and mentions of Tweets**. We wrote this
-because we suspected that current research approaches were significantly under-counting the number of Tweets embedded 
+because we suspected that current research approaches were significantly under-counting the number of Tweets embedded
 in online news stories. Our initial evaluation confirms this.
 
 Quickstart
@@ -20,13 +20,13 @@ Install with pip: `pip install tweetfinder`.
 from tweetfinder import Article
 my_article = Article(url="http://my.news/article")  # this will load and parse the article
 
-# you can list discover all the tweets that are embedded in the HTML 
+# you can list discover all the tweets that are embedded in the HTML
 num_embedded = my_article.count_embedded_tweets()
 tweets_embedded = my_article.list_embedded_tweets() # metadata about tweets that are embedded
 
 # you can also discover any mentions of twitter (in English), like "tweeted that" or "in a retweet"
 num_mentions = my_article.count_mentioned_tweets()
-tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet 
+tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet
 ```
 
 
@@ -35,9 +35,9 @@ Motivation
 
 Why are embedded tweets being undercounted? Two main reasons:
 
-1. Not everyone embeds tweets following [the `blockquote` guidelines from Twitter](https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet) 
-2. Many new websites render their content via Javascript, not raw HTML so unless you run in a browser and execute the 
-    Javascript, you won't see the embedded tweets on the page source 
+1. Not everyone embeds tweets following [the `blockquote` guidelines from Twitter](https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet)
+2. Many new websites render their content via Javascript, not raw HTML so unless you run in a browser and execute the
+    Javascript, you won't see the embedded tweets on the page source
 
 Some of our initial numbers behind this:  
 
@@ -45,15 +45,15 @@ Some of our initial numbers behind this:
 * [Goose3](https://goose3.readthedocs.io/en/latest/), which is what current papers seems to use, found 518 in the same
    set of stories (ie. it missed about 20%)
 * If you add in support for processing Javascript-based embeds, we found 859 (35% more) that traditional raw HTML-based
-   counting approaches miss 
-   
-These to-be-published results confirm our suspicion - most large quantitative news projects are under-counting 
+   counting approaches miss
+
+These to-be-published results confirm our suspicion - most large quantitative news projects are under-counting
 embedded Tweets by around 35% or mre. This library is our attempt to help fix that.
 
 Why does that matter? Understanding how Twitter (and other platforms) is used in news media is critical for building
-a better map of how the media ecosystem functions. News shapes how we see the world; studying the architectures of 
+a better map of how the media ecosystem functions. News shapes how we see the world; studying the architectures of
 information flows around us is critical for preventing the spread of hate speech, misinformation, and supporting
-newsrooms and democracy. 
+newsrooms and democracy.
 
 
 API
@@ -85,7 +85,7 @@ we found the tweet. It could look like this:
 ```
 
 Properties:
-  * `tweet_id`: the unique id of the tweet, can be used in concert with Twitter's API to pull more metadata (always included) 
+  * `tweet_id`: the unique id of the tweet, can be used in concert with Twitter's API to pull more metadata (always included)
   * `html_source`: a string indicating which method the tweet was found with (always included)
   * `full_url`: the complete URL to the tweet on Twitter (sometimes included)
   * `username`: the twitter username of the author of the tweet, including the "@" (sometimes included)
@@ -110,8 +110,8 @@ Return a `list` of `dicts` with information about the mention of a tweet. It wil
 }]
 ```
 
-Properties: 
-  * `phrase`: the phrase matched as a mention of twitter 
+Properties:
+  * `phrase`: the phrase matched as a mention of twitter
   * `context`: a window of characters around the phrease to help you understand where it occurred
   * `content_start_index`: the index into `my_article.get_content()` you can use to find the match
 
@@ -135,6 +135,7 @@ If you want to work on this module, clone the repo and install dependencies: `ma
 Version History
 ---------------
 
+* __v1.0.0__: added documentation and evaluation scripts
 * __v0.2.1__: fix case-related bug in finding mentions
 * __v0.2.0__: better documentation
 * __v0.1.0__: initial release for testing
@@ -143,7 +144,7 @@ Version History
 Credits
 -------
 
-This library is part of the [Media Cloud](https://mediacloud.org) project, and is supported by the 
+This library is part of the [Media Cloud](https://mediacloud.org) project, and is supported by the
 [Co-Lab for Data Impact](https://camd.northeastern.edu/research-scholarship-creative-practice/co-laboratory-for-data-impact/)
 and the [Data Culture Group](https://dataculturegroup.org) at Northeastern University.
 
