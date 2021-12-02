@@ -23,13 +23,13 @@ Install with pip: ``pip install tweetfinder``.
     from tweetfinder import Article
     my_article = Article(url="http://my.news/article")  # this will load and parse the article
 
-    # you can list discover all the tweets that are embedded in the HTML 
+    # you can list discover all the tweets that are embedded in the HTML
     num_embedded = my_article.count_embedded_tweets()
     tweets_embedded = my_article.list_embedded_tweets() # metadata about tweets that are embedded
 
     # you can also discover any mentions of twitter (in English), like "tweeted that" or "in a retweet"
     num_mentions = my_article.count_mentioned_tweets()
-    tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet 
+    tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet
 
 Motivation
 ----------
@@ -157,6 +157,9 @@ Distribution
 Version History
 ---------------
 
+-  **v1.0.1**: fix packaging to include data files required
+-  **v1.0.0**: added documentation and evaluation scripts
+-  **v0.2.1**: fix case-related bug in finding mentions
 -  **v0.2.0**: better documentation
 -  **v0.1.0**: initial release for testing
 

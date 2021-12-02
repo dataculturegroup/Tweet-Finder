@@ -17,8 +17,10 @@ setup(name='tweetfinder',
       long_description_content_type='text/markdown',
       author='Rahul Bhargava',
       author_email='r.bhargava@northeastern.edu',
-      packages={'tweetfinder'},
-      package_data={'': ['LICENSE']},
+      packages=['tweetfinder', 'tweetfinder.test'],
+      data_files=[
+          ('data', ['tweetfinder/data/twitter-patterns-rony-2018.txt']),
+      ],
       include_package_data=True,
       install_requires=[
           "requests>=2.26.0",

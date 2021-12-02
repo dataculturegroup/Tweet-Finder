@@ -135,6 +135,7 @@ If you want to work on this module, clone the repo and install dependencies: `ma
 Version History
 ---------------
 
+* __v1.0.1__: fix packaging to include data files required
 * __v1.0.0__: added documentation and evaluation scripts
 * __v0.2.1__: fix case-related bug in finding mentions
 * __v0.2.0__: better documentation
