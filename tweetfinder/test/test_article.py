@@ -3,6 +3,8 @@ from unittest import TestCase
 import logging
 from goose3 import Goose
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import time
 from webdriver_manager.chrome import ChromeDriverManager
@@ -23,7 +25,7 @@ This utilizes a few webpages as static test cases:
 '''
 
 
-def _load_fixture(filename: str, return_article: bool = True) -> Article|str:
+def _load_fixture(filename: str, return_article: bool = True):
     """
     Load a single story from a local HTML file and parse it into an Article
     :param filename:
@@ -73,6 +75,15 @@ class TestEmbeddedTweets(TestCase):
         article = _load_fixture("guardian.html")
         assert article.embeds_tweets() is False
         assert article.count_embedded_tweets() == 0
+
+    def testDeletedUser(self):
+        # url = "https://www.buzzfeednews.com/article/briannasacks/moon-mars-mars-moon-trump"
+        article = _load_fixture("buzzfeed.html")
+        assert article.embeds_tweets() is True
+        assert article.count_embedded_tweets() == 13
+        embedded_tweets = article.list_embedded_tweets()
+        assert embedded_tweets[0]['tweet_id'] == '1137051097955102720'
+        assert embedded_tweets[0]['username'] == 'realDonaldTrump'
 
 
 class TestMentionedTweets(TestCase):
@@ -138,15 +149,15 @@ class TestArticleViaSelenium(TestCase):
         chrome_options = Options()
         chrome_options.add_argument('--mute-audio')
         chrome_options.add_argument('--headless')
-        # make sure we don't have verison incompatibilities
+        # make sure we don't have version incompatibilities
         # see https://stackoverflow.com/questions/60296873/sessionnotcreatedexception-message-session-not-created-this-version-of-chrome/62127806
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
 
     def _loadViaSelenium(self, url: str, delay_secs: int = 1):
         self.driver.get(url)
-        # let it render the javscript, then grab the *rendered* html, not the source_html
+        # let it render the javascript, then grab the *rendered* html, not the source_html
         time.sleep(delay_secs)  # hopefully it renders after this much time
-        rendered_html = self.driver.find_element_by_tag_name('html').get_attribute('innerHTML')
+        rendered_html = self.driver.find_element(By.TAG_NAME, "html").get_attribute('innerHTML')
         # now that we have HTML rendered by Javascript, we can check for tweets
         return Article(html=rendered_html)
 
@@ -155,6 +166,17 @@ class TestArticleViaSelenium(TestCase):
         url = "https://www.foxnews.com/politics/black-lives-matter-hamas-terrorists-israeli"
         article = self._loadViaSelenium(url)
         assert article.count_embedded_tweets() == 3
+
+    def testTrumpRemoved(self):
+        # and article with Trump as a blockquote:
+        url = "https://abcnews.go.com/Politics/donald-trump-tweets-years-greeting-stroke-midnight/story?id=44494871"
+        article = self._loadViaSelenium(url)
+        assert article.embeds_tweets() is True
+        assert article.count_embedded_tweets() == 5
+        embedded_tweets = article.list_embedded_tweets()
+        assert len(embedded_tweets) == 5
+        assert embedded_tweets[0]['username'] == 'realDonaldTrump'
+        assert embedded_tweets[0]['tweet_id'] == '815422340540547073'
 
     '''
     # This tests against our manually coded set of articles. However, since it loads those live this isn't a great
