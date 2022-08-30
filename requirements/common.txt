@@ -1,4 +1,4 @@
 requests>=2.26.0
-readability-lxml>=0.8.1
+readability-lxml==0.8.*
 pycld2>=0.41
-beautifulsoup4>=4.10.0
+beautifulsoup4==4.11.*

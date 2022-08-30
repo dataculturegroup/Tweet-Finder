@@ -1,10 +1,10 @@
 -r common.txt
-pandas
-twine
-pylint
-pytest
+pandas==1.4.*
+twine==4.0.*
+pylint==2.15.*
+pytest==7.1.*
 goose3
-selenium
-Sphinx
-pandoc
-webdriver-manager
+selenium==4.4.*
+Sphinx==5.1.*
+pandoc==2.2.*
+webdriver-manager==3.8.*
