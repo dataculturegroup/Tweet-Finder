@@ -1,8 +1,10 @@
 import time
 from goose3 import Goose
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import WebDriverException
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import pandas as pd
 
@@ -60,7 +62,7 @@ def getDriver():
     chrome_options.add_argument('--mute-audio')
     chrome_options.add_argument('--headless')
     try:
-        driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     except WebDriverException as wde:
         driver = webdriver.Chrome('chromedriver.exe', options=chrome_options)
     return driver
@@ -70,7 +72,7 @@ def _loadViaSelenium(driver, url: str, delay_secs: int = 1):
     driver.get(url)
     # let it render the javascript, then grab the *rendered* html, not the source_html
     time.sleep(delay_secs)  # hopefully it renders after this much time
-    rendered_html = driver.find_element_by_tag_name('html').get_attribute('innerHTML')
+    rendered_html = driver.find_element(By.TAG_NAME, "html").get_attribute('innerHTML')
     # now that we have HTML rendered by Javascript, we can check for tweets
     return Article(html=rendered_html)
 
