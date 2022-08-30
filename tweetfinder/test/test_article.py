@@ -8,7 +8,6 @@ import time
 from webdriver_manager.chrome import ChromeDriverManager
 
 from tweetfinder import Article
-import pandas as pd
 
 this_dir = os.path.dirname(os.path.abspath(__file__))
 fixtures_dir = os.path.join(this_dir, "fixtures")
@@ -24,7 +23,7 @@ This utilizes a few webpages as static test cases:
 '''
 
 
-def _load_fixture(filename: str, return_article:bool = True) -> Article:
+def _load_fixture(filename: str, return_article: bool = True) -> Article|str:
     """
     Load a single story from a local HTML file and parse it into an Article
     :param filename:
