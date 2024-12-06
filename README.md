@@ -135,6 +135,7 @@ If you want to work on this module, clone the repo and install dependencies: `ma
 Version History
 ---------------
 
+* __v1.1.1__: merge in deleted user fix
 * __v1.1.0__: updates to get it running again in a realistic modern python env
 * __v1.0.1__: fix packaging to include data files required
 * __v1.0.0__: added documentation and evaluation scripts
