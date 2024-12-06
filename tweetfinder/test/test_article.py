@@ -25,7 +25,7 @@ This utilizes a few webpages as static test cases:
 '''
 
 
-def _load_fixture(filename: str, return_article: bool = True) -> Article|str:
+def _load_fixture(filename: str, return_article: bool = True):
     """
     Load a single story from a local HTML file and parse it into an Article
     :param filename:
@@ -75,6 +75,15 @@ class TestEmbeddedTweets(TestCase):
         article = _load_fixture("guardian.html")
         assert article.embeds_tweets() is False
         assert article.count_embedded_tweets() == 0
+
+    def testDeletedUser(self):
+        # url = "https://www.buzzfeednews.com/article/briannasacks/moon-mars-mars-moon-trump"
+        article = _load_fixture("buzzfeed.html")
+        assert article.embeds_tweets() is True
+        assert article.count_embedded_tweets() == 13
+        embedded_tweets = article.list_embedded_tweets()
+        assert embedded_tweets[0]['tweet_id'] == '1137051097955102720'
+        assert embedded_tweets[0]['username'] == 'realDonaldTrump'
 
 
 class TestMentionedTweets(TestCase):
@@ -145,7 +154,7 @@ class TestArticleViaSelenium(TestCase):
 
     def _loadViaSelenium(self, url: str, delay_secs: int = 1):
         self.driver.get(url)
-        # let it render the javscript, then grab the *rendered* html, not the source_html
+        # let it render the javascript, then grab the *rendered* html, not the source_html
         time.sleep(delay_secs)  # hopefully it renders after this much time
         html_element = self.driver.find_element(By.TAG_NAME, 'html')
         rendered_html = html_element.get_attribute('innerHTML')
@@ -157,6 +166,17 @@ class TestArticleViaSelenium(TestCase):
         url = "https://www.foxnews.com/politics/black-lives-matter-hamas-terrorists-israeli"
         article = self._loadViaSelenium(url)
         assert article.count_embedded_tweets() == 3
+
+    def testTrumpRemoved(self):
+        # and article with Trump as a blockquote:
+        url = "https://abcnews.go.com/Politics/donald-trump-tweets-years-greeting-stroke-midnight/story?id=44494871"
+        article = self._loadViaSelenium(url)
+        assert article.embeds_tweets() is True
+        assert article.count_embedded_tweets() == 5
+        embedded_tweets = article.list_embedded_tweets()
+        assert len(embedded_tweets) == 5
+        assert embedded_tweets[0]['username'] == 'realDonaldTrump'
+        assert embedded_tweets[0]['tweet_id'] == '815422340540547073'
 
     '''
     # This tests against our manually coded set of articles. However, since it loads those live this isn't a great

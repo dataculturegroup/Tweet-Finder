@@ -136,30 +136,34 @@ class Article:
         # Twitter recommends embedding as block quotes
         blockquotes = self._html_soup.find_all('blockquote')
         for b in blockquotes:
-            is_embedded_tweet = False
-            # check the official way of doing it
-            if b.has_attr('class') and ('twitter-tweet' in b['class']):  # this is an array of the CSS classes
-                is_embedded_tweet = True
+            # We could check the official way of doing it:
+            # `if b.has_attr('class') and ('twitter-tweet' in b['class']):  # this is an array of the CSS classes`
             # But we found some sites don't use that class, so check if there is a link to twitter in there.
             # In our experimentation this produces better results than just checking the class.
             links = b.find_all('a')
-            twitter_url = None
+            tweet_info = None
             for link in links:
-                if link.has_attr('href') and ('twitter.com' in link['href']):
-                    is_embedded_tweet = True
-                    twitter_url = link['href']
-            if is_embedded_tweet:
-                try:
-                    info = tweet_status_url_pattern.match(twitter_url).groups()
-                    tweet_info = dict(tweet_id=info[2], username=info[0], full_url=twitter_url,
+                # grab first link that we think is a good one to parse
+                if (tweet_info is None) and tweet_status_url_pattern.match(link['href']):
+                    info = tweet_status_url_pattern.match(link['href']).groups()
+                    tweet_info = dict(tweet_id=info[2], username=info[0], full_url=link['href'],
                                       html_source='blockquote url pattern')
-                except Exception:  # some other format
-                    username_start_index = twitter_url.find('@')
-                    username = twitter_url[username_start_index:-1]
-                    tweet_id_start_index = twitter_url.find('/')
-                    tweet_id = twitter_url[tweet_id_start_index:-1]
-                    tweet_info = dict(tweet_id=tweet_id, username=username, full_url=twitter_url,
-                                      html_source='blockquote url fallback')
+            # if no super nice link, fallback on custom parsing of first one that has some good potential
+            if tweet_info is None:
+                for link in links:
+                    if (tweet_info is None) and link.has_attr('href') and ('twitter.com' in link['href']):
+                        try:
+                            twitter_url = link['href']
+                            username_start_index = twitter_url.find('@')
+                            username = twitter_url[username_start_index:-1]
+                            tweet_id_start_index = twitter_url.find('/')
+                            tweet_id = twitter_url[tweet_id_start_index:-1]
+                            tweet_info = dict(tweet_id=tweet_id, username=username, full_url=twitter_url,
+                                              html_source='blockquote url fallback')
+                        except Exception:  # some other format that we couldn't handle
+                            logger.warning("Can't parse potential link to tweet: {}".format(link['href']))
+                            tweet_info = None
+            if tweet_info:
                 tweets.append(tweet_info)
         # some people do it differently, (CNN, others) embed with like this
         divs = self._html_soup.find_all('div', class_="embed-twitter")

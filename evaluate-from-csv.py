@@ -12,6 +12,7 @@ import time
 from goose3 import Goose
 from selenium import webdriver
 import threading
+from selenium.webdriver.common.by import By
 import concurrent.futures
 from typing import Dict
 
@@ -85,7 +86,7 @@ def story_worker(story: Dict) -> Dict:
         driver = get_driver()  # grab the chrome instance for the thread we are in
         driver.get(url)
         time.sleep(1)  # give it a second to render
-        rendered_html = driver.find_element_by_tag_name('html').get_attribute('innerHTML')
+        rendered_html = driver.find_element(By.TAG_NAME, "html").get_attribute('innerHTML')
         article_js = Article(html=rendered_html)
         data['tweet_finder_js_embeds'] = article_js.count_embedded_tweets()
         data['tweet_finder_js_mentions'] = article_js.count_mentioned_tweets()
