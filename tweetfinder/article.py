@@ -7,10 +7,10 @@ import readability
 import re
 import requests
 import logging
-import pycld2 as cld2
 from typing import List, Dict
 
 from . import mentions
+from . import language as languages
 
 logger = logging.getLogger(__name__)
 
@@ -180,14 +180,7 @@ class Article:
     def _validate_language(self):
         """Throw an error if this isn't a supported language for finding mentions."""
         valid_languages = ['en']
-        try:
-            is_reliable, _, details = cld2.detect(self._content)
-            detected_language = details[0][1]
-            if is_reliable and (detected_language not in valid_languages):
-                raise UnsupportedLanguageException(detected_language)
-        except cld2.error:
-            # if there was some weird unicode then assume it isn't english
-            raise UnsupportedLanguageException("Undetectable")
+        return languages.detect_most_likely(self._content) in valid_languages
 
     def _find_mentions(self) -> List[Dict]:
         """

@@ -1,10 +1,12 @@
 import os
 from unittest import TestCase
 import logging
+import time
 from goose3 import Goose
 from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.options import Options
-import time
 from webdriver_manager.chrome import ChromeDriverManager
 
 from tweetfinder import Article
@@ -138,15 +140,15 @@ class TestArticleViaSelenium(TestCase):
         chrome_options = Options()
         chrome_options.add_argument('--mute-audio')
         chrome_options.add_argument('--headless')
-        # make sure we don't have verison incompatibilities
-        # see https://stackoverflow.com/questions/60296873/sessionnotcreatedexception-message-session-not-created-this-version-of-chrome/62127806
-        self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+        service = ChromeService(ChromeDriverManager().install())
+        self.driver = webdriver.Chrome(service=service, options=chrome_options)
 
     def _loadViaSelenium(self, url: str, delay_secs: int = 1):
         self.driver.get(url)
         # let it render the javscript, then grab the *rendered* html, not the source_html
         time.sleep(delay_secs)  # hopefully it renders after this much time
-        rendered_html = self.driver.find_element_by_tag_name('html').get_attribute('innerHTML')
+        html_element = self.driver.find_element(By.TAG_NAME, 'html')
+        rendered_html = html_element.get_attribute('innerHTML')
         # now that we have HTML rendered by Javascript, we can check for tweets
         return Article(html=rendered_html)
 
