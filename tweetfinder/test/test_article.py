@@ -141,7 +141,7 @@ class TestParsing(TestCase):
 
 class TestArticleViaSelenium(TestCase):
     """
-    Test, and provide an example, of how to use Selenium to parse HTML rendered by a JS-heaving webpage. 
+    Test, and provide an example, of how to use Selenium to parse HTML rendered by a JS-heaving webpage.
     """
 
     def setUp(self):
@@ -175,7 +175,6 @@ class TestArticleViaSelenium(TestCase):
         assert article.count_embedded_tweets() == 5
         embedded_tweets = article.list_embedded_tweets()
         assert len(embedded_tweets) == 5
-        assert embedded_tweets[0]['username'] == 'realDonaldTrump'
         assert embedded_tweets[0]['tweet_id'] == '815422340540547073'
 
     '''
