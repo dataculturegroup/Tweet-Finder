@@ -20,16 +20,16 @@ Install with pip: ``pip install tweetfinder``.
 
 .. code:: python
 
-    from tweetfinder import Article
-    my_article = Article(url="http://my.news/article")  # this will load and parse the article
+   from tweetfinder import Article
+   my_article = Article(url="http://my.news/article")  # this will load and parse the article
 
-    # you can list discover all the tweets that are embedded in the HTML
-    num_embedded = my_article.count_embedded_tweets()
-    tweets_embedded = my_article.list_embedded_tweets() # metadata about tweets that are embedded
+   # you can list discover all the tweets that are embedded in the HTML
+   num_embedded = my_article.count_embedded_tweets()
+   tweets_embedded = my_article.list_embedded_tweets() # metadata about tweets that are embedded
 
-    # you can also discover any mentions of twitter (in English), like "tweeted that" or "in a retweet"
-    num_mentions = my_article.count_mentioned_tweets()
-    tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet
+   # you can also discover any mentions of twitter (in English), like "tweeted that" or "in a retweet"
+   num_mentions = my_article.count_mentioned_tweets()
+   tweet_mentions = my_article.list_mentioned_tweets()  # list of text snippets that mention a tweet
 
 Motivation
 ----------
@@ -40,19 +40,19 @@ Why are embedded tweets being undercounted? Two main reasons:
    from
    Twitter <https://help.twitter.com/en/using-twitter/how-to-embed-a-tweet>`__
 2. Many new websites render their content via Javascript, not raw HTML
-   so unless you run in a browser and execute the Javascript, you won't
+   so unless you run in a browser and execute the Javascript, you won’t
    see the embedded tweets on the page source
 
 Some of our initial numbers behind this:
 
--  Out of 1000 stories that mentioned twitter, our library found 640
-   embedded tweets in raw HTML
--  `Goose3 <https://goose3.readthedocs.io/en/latest/>`__, which is what
-   current papers seems to use, found 518 in the same set of stories
-   (ie. it missed about 20%)
--  If you add in support for processing Javascript-based embeds, we
-   found 859 (35% more) that traditional raw HTML-based counting
-   approaches miss
+- Out of 1000 stories that mentioned twitter, our library found 640
+  embedded tweets in raw HTML
+- `Goose3 <https://goose3.readthedocs.io/en/latest/>`__, which is what
+  current papers seems to use, found 518 in the same set of stories (ie.
+  it missed about 20%)
+- If you add in support for processing Javascript-based embeds, we found
+  859 (35% more) that traditional raw HTML-based counting approaches
+  miss
 
 These to-be-published results confirm our suspicion - most large
 quantitative news projects are under-counting embedded Tweets by around
@@ -72,19 +72,19 @@ When you create an Article the HTML is downloaded (if needed) and parsed
 immediately to find any mentions of twitter and any embedded tweets.
 There a number of methods to return the information found:
 
-my\_article.embeds\_tweets()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my_article.embeds_tweets()
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return ``True`` or ``False`` depending on if there are any tweets
 embedded in the article.
 
-my\_article.count\_embedded\_tweets()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my_article.count_embedded_tweets()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return the number of tweets embedded in the article.
 
-my\_article.list\_embedded\_tweets()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my_article.list_embedded_tweets()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return a ``list`` of ``dicts`` with information about the tweets found.
 The properties in this ``dict`` depend on how we found the tweet. It
@@ -92,44 +92,44 @@ could look like this:
 
 .. code:: python
 
-    [{
-        'tweet_id': '//twitter.com/sliccard',
-        'html_source': 'blockquote url fallback'
-        'username': '',
-        'full_url': 'https://twitter.com/sliccardo',
-    }]
+   [{
+       'tweet_id': '//twitter.com/sliccard',
+       'html_source': 'blockquote url fallback'
+       'username': '',
+       'full_url': 'https://twitter.com/sliccardo',
+   }]
 
 Properties: \* ``tweet_id``: the unique id of the tweet, can be used in
-concert with Twitter's API to pull more metadata (always included) \*
+concert with Twitter’s API to pull more metadata (always included) \*
 ``html_source``: a string indicating which method the tweet was found
 with (always included) \* ``full_url``: the complete URL to the tweet on
 Twitter (sometimes included) \* ``username``: the twitter username of
-the author of the tweet, including the "@" (sometimes included)
+the author of the tweet, including the “@” (sometimes included)
 
-my\_article.mentions\_tweets()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my_article.mentions_tweets()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return ``True`` or ``False`` depending on if there are any mentions of
 tweets in the article.
 
-my\_article.count\_mentioned\_tweets()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my_article.count_mentioned_tweets()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return the number of mentions of tweets in the article.
 
-my\_article.list\_mentioned\_tweets()
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+my_article.list_mentioned_tweets()
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Return a ``list`` of ``dicts`` with information about the mention of a
 tweet. It will look like this:
 
 .. code:: python
 
-    [{
-        'phrase': 'tweeted',
-        'context': 'in March last year. He decided to comfort himself by bingeing on a favourite TV show. “I randomly tweeted something about putting on the first episode of a TV series. I’m slightly afraid to say that it was',
-        'content_start_index': '670',
-    }]
+   [{
+       'phrase': 'tweeted',
+       'context': 'in March last year. He decided to comfort himself by bingeing on a favourite TV show. “I randomly tweeted something about putting on the first episode of a TV series. I’m slightly afraid to say that it was',
+       'content_start_index': '670',
+   }]
 
 Properties: \* ``phrase``: the phrase matched as a mention of twitter \*
 ``context``: a window of characters around the phrease to help you
@@ -151,17 +151,19 @@ Distribution
    changes
 4. Run ``make sphinx-docs`` to update the documentation
 5. Run ``make build-release`` to create an install package
-6. Run ``make release-test`` to upload it to PyPI's test platform
+6. Run ``make release-test`` to upload it to PyPI’s test platform
 7. Run ``make release`` to upload it to PyPI
 
 Version History
 ---------------
 
--  **v1.0.1**: fix packaging to include data files required
--  **v1.0.0**: added documentation and evaluation scripts
--  **v0.2.1**: fix case-related bug in finding mentions
--  **v0.2.0**: better documentation
--  **v0.1.0**: initial release for testing
+- **v1.1.0**: updates to get it running again in a realistic modern
+  python env
+- **v1.0.1**: fix packaging to include data files required
+- **v1.0.0**: added documentation and evaluation scripts
+- **v0.2.1**: fix case-related bug in finding mentions
+- **v0.2.0**: better documentation
+- **v0.1.0**: initial release for testing
 
 Credits
 -------
@@ -175,8 +177,8 @@ Northeastern University.
 Maintainers:
 ~~~~~~~~~~~~
 
--  Rahul Bhargava
--  Dina Zemlyanker
+- Rahul Bhargava
+- Dina Zemlyanker
 
 
 Documentation Links
